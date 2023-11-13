@@ -24,6 +24,12 @@ $app->get('/meta/ip', function ($request, $response, $args) use($api) {
 	return $response;
 });
 
+$app->get('/test', function ($request, $response, $args) use($api) {
+	$row = $api->sp_select_ipadd();
+	$response->getBody()->write($row);
+	return $response;
+});
+
 
 $app->run();
 
