@@ -25,7 +25,7 @@ $app->get('/meta/ip', function ($request, $response, $args) use($api) {
 });
 
 $app->get('/test', function ($request, $response, $args) use($api) {
-	$row = $api->sp_select_ipadd();
+	$row = $api->sp_select_test();
 	$response->getBody()->write($row);
 	return $response;
 });
