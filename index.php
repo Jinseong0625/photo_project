@@ -57,6 +57,34 @@ $app->post('/ip', function ($request, $response, $args) use($api)
 	return $response;
 });
 
+$app->post('/ulog', function ($request, $response, $args) use($api) 
+{
+	$params = $request->getParsedBody();
+	$ipidx = $params['ipidx'];
+	$photo_url = $params['photo_url'];
+	$user_cnt = $params['user_cnt'];
+	if($ipidx == null)
+	{
+		$json_data = array
+        (
+            "error" => "E1003",
+            "data" => ""
+        );
+
+		$row = json_encode($json_data);
+	}
+	else
+	{
+		$row = $api->sp_insert_UserLog($ipidx,$photo_url,$user_cnt);
+
+		if (is_array($row)) {
+			$row = json_encode($row);
+		}
+	}
+	
+	$response->getBody()->write($row);
+	return $response;
+});
 
 $app->run();
 
