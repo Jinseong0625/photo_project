@@ -95,6 +95,47 @@ $app->get('/ulog/{uidx}', function ($request, $response, $args) use($api)
 	return $response;
 });
 
+$app->get('/alltotal/{ipidx}', function ($request, $response, $args) use($api) 
+{	
+	$ipidx = $request->getAttribute('ipidx');
+	$row = $api->sp_select_TotalLog_All($ipidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
+$app->get('/daytotal/{ipidx}', function ($request, $response, $args) use($api) 
+{	
+	$ipidx = $request->getAttribute('ipidx');
+	$row = $api->sp_select_Total_day($ipidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
+$app->get('/weektotal/{ipidx}', function ($request, $response, $args) use($api) 
+{	
+	$ipidx = $request->getAttribute('ipidx');
+	$row = $api->sp_select_total_week($ipidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
+$app->get('/monthtotal/{ipidx}', function ($request, $response, $args) use($api) 
+{	
+	$ipidx = $request->getAttribute('ipidx');
+	$row = $api->sp_select_Total_month($ipidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
+$app->get('/yeartotal/{ipidx}', function ($request, $response, $args) use($api) 
+{	
+	$ipidx = $request->getAttribute('ipidx');
+	$row = $api->sp_select_Total_year($ipidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
+
 $app->run();
 
 ?>
