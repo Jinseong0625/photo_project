@@ -30,6 +30,33 @@ $app->get('/test', function ($request, $response, $args) use($api) {
 	return $response;
 });
 
+$app->post('/ip', function ($request, $response, $args) use($api) 
+{
+	$params = $request->getParsedBody();
+	$ip_add = $params['ip_address'];
+	if($ip_add == null)
+	{
+		$json_data = array
+        (
+            "error" => "E1003",
+            "data" => ""
+        );
+
+		$row = json_encode($json_data);
+	}
+	else
+	{
+		$row = $api->sp_insert_ipadd($ip_add);
+
+		if (is_array($row)) {
+			$row = json_encode($row);
+		}
+	}
+	
+	$response->getBody()->write($row);
+	return $response;
+});
+
 
 $app->run();
 
