@@ -86,6 +86,15 @@ $app->post('/ulog', function ($request, $response, $args) use($api)
 	return $response;
 });
 
+// 
+$app->get('/ulog/{uidx}', function ($request, $response, $args) use($api) 
+{	
+	$uidx = $request->getAttribute('uidx');
+	$row = $api->sp_select_UserLog($uidx);
+	$response->getBody()->write($row);
+	return $response;
+});
+
 $app->run();
 
 ?>
