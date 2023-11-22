@@ -1,7 +1,8 @@
 <?php
 
-require __DIR__ .'/S3Connector.php';
 namespace DBManager;
+
+require __DIR__ .'/S3Connector.php';
 
 use Aws\S3\S3Client;
 use Psr\Http\Message\UploadedFileInterface;
