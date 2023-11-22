@@ -6,7 +6,7 @@ require __DIR__ .'/S3Connector.php';
 
 use Aws\S3\S3Client;
 use Psr\Http\Message\UploadedFileInterface;
-use DBManager\S3Connector;
+use S3Connector;
 use DBManager\DBHandler;
 
 class S3Handler extends S3Connector
