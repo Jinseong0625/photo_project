@@ -295,12 +295,32 @@ class DBHandler extends DBConnector{
         return json_encode($json_data);
     }
 
-    public function saveMetadata($fileName, $s3Key)
-    {
+    public function saveMetadata($filename, $s3Key)
+    {   
+        try {
+            $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key) VALUES (?, ?)');
+            $stmt->execute([$filename, $s3Key]);
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+        }
+    }
+
+    public function getUploadData($udIdx) {
+        try {
+            $stmt = $this->db->prepare('SELECT * FROM UploadData WHERE ud_idx = ?');
+            $stmt->execute([$udIdx]);
+            return $stmt->fetch();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+            return false;
+        }
+    }
 
         // 예제: 저장 프로시저를 호출하여 메타데이터 저장
 
-        $error = "E0000";
+        /*$error = "E0000";
  
         if(!($stmt = $this->db->prepare("CALL sp_insert_S3file_uplode(?, NOW())"))){
             $error = "E1000";
@@ -325,8 +345,8 @@ class DBHandler extends DBConnector{
             "data" => $data
         );
 
-        return $json_data;
+        return $json_data;*/
 
-    }
+    #}
 }
     ?>

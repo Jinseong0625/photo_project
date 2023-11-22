@@ -144,8 +144,15 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     // Check if image file is uploaded
     if (isset($uploadedFiles['image'])) {
         $imageHandler = new \DBManager\S3Handler();
-        $imageHandler->uploadImage($uploadedFiles['image']);
-        return $response->withStatus(200)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+        $result = $imageHandler->uploadImage($uploadedFiles['image']);
+
+        if ($result['success']) {
+            // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
+            return $response->withStatus(200)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+        } else {
+            // 실패 시 에러 응답
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+        }
     } else {
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
     }
