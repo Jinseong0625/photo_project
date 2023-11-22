@@ -1,5 +1,6 @@
 <?php
 
+require __DIR__ .'/S3Connector.php';
 namespace DBManager;
 
 use Aws\S3\S3Client;
