@@ -9,6 +9,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
 use DBManager\DBHandler;
+use DBManager\S3Handler;
 
 $app = AppFactory::create();
 $api = new DBHandler();
