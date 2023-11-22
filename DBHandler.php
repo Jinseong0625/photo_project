@@ -299,7 +299,8 @@ class DBHandler extends DBConnector{
     {   
         try {
             $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key) VALUES (?, ?)');
-            $stmt->execute([$filename, $s3Key]);
+            $stmt->bind_param("ss", $filename, $s3Key); // 바인딩 수정
+            $stmt->execute();
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
