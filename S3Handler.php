@@ -4,7 +4,7 @@ namespace DBManager;
 
 use Aws\S3\S3Client;
 use Psr\Http\Message\UploadedFileInterface;
-use S3Connector;
+use DBManager\S3Connector;
 use DBManager\DBHandler;
 
 class S3Handler extends S3Connector
