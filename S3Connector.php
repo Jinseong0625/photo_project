@@ -15,10 +15,10 @@ class S3Connector {
         // AWS SDK를 사용하여 S3 클라이언트 초기화
         $s3 = new S3Client([
             'version'     => 'latest',
-            'region'      => 'your-region', // 예: us-east-1
+            'region'      => 'ap-northeast-2', // 예: us-east-1
             'credentials' => [
-                'key'    => 'your-access-key',
-                'secret' => 'your-secret-key',
+                'key'    => AWS_ACCESS_KEY,
+                'secret' => AWS_SECRET_KEY,
             ],
         ]);
 

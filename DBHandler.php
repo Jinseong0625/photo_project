@@ -295,5 +295,38 @@ class DBHandler extends DBConnector{
         return json_encode($json_data);
     }
 
+    public function saveMetadata($fileName, $s3Key)
+    {
+
+        // 예제: 저장 프로시저를 호출하여 메타데이터 저장
+
+        $error = "E0000";
+ 
+        if(!($stmt = $this->db->prepare("CALL sp_insert_S3file_uplode(?, NOW())"))){
+            $error = "E1000";
+        }
+        if(!$stmt->bind_param("s", $fileName)){
+            $error = "E1001";
+        }
+        if(!$stmt->execute()){
+            $error = "E1002";
+        }
+
+        $res = $stmt->get_result();
+        $data = array();
+
+        while($row = $res->fetch_assoc()){
+            $data[] = $row;
+        }
+
+        $json_data = array
+        (
+            "error" => $error,
+            "data" => $data
+        );
+
+        return $json_data;
+
+    }
 }
     ?>
