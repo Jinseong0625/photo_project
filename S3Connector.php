@@ -16,8 +16,8 @@ class S3Connector {
             'version'     => 'latest',
             'region'      => 'ap-northeast-2', // 예: us-east-1
             'credentials' => [
-                'key'    => AWS_ACCESS_KEY,
-                'secret' => AWS_SECRET_KEY,
+                'key'    => 'AKIAX73O662BZXU6ZJGY',
+                'secret' => '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',
             ],
         ]);
 
