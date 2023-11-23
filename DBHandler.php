@@ -373,5 +373,17 @@ class DBHandler extends DBConnector{
             return false;
         }
     }
+
+    public function beginTransaction() {
+        $this->db->begin_transaction();
+    }
+
+    public function commit() {
+        $this->db->commit();
+    }
+
+    public function rollBack() {
+        $this->db->rollback();
+    }
 }
     ?>

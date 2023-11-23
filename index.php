@@ -4,8 +4,8 @@ require __DIR__ . '/vendor/autoload.php';
 require __DIR__ .'/DBHandler.php';
 require __DIR__ . '/S3Handler.php';
 
-use Slim\Psr7\Request as Request;
-use Slim\Psr7\Response as Response;
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
 use DBManager\DBHandler;
@@ -163,7 +163,7 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
-    $db = $request->getAttribute('db');
+    $db = new DBHandler(); // 또는 컨테이너에 등록해서 사용
 
     // 트랜잭션 시작
     $db->beginTransaction();
@@ -172,13 +172,12 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
         $imageHandler = new \DBManager\S3Handler();
         $result = $imageHandler->downloadImage($fileName);
 
-        if ($result['error'] === null) {
+        if ($result['error'] === 'E0000') {
             // 이미지 다운로드 성공
             $response->getBody()->write($result['data']);
 
             // 파일 다운로드 성공 시 상태 업데이트
-            $dbHandler = new \DBManager\DBHandler(); // DBHandler 네임스페이스가 맞는지 확인
-            $dbHandler->updateFileStatus($fileName, 1);
+            $db->updateFileStatus($fileName, 1);
 
             // 트랜잭션 커밋
             $db->commit();
