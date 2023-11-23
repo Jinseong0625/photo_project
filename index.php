@@ -163,7 +163,7 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
-    $db = new DBHandler(); // 또는 컨테이너에 등록해서 사용
+    $db = $request->getAttribute('db');
 
     // 트랜잭션 시작
     $db->beginTransaction();
@@ -172,12 +172,13 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
         $imageHandler = new \DBManager\S3Handler();
         $result = $imageHandler->downloadImage($fileName);
 
-        if ($result['error'] === 'E0000') {
+        if ($result['error'] === null) {
             // 이미지 다운로드 성공
             $response->getBody()->write($result['data']);
 
             // 파일 다운로드 성공 시 상태 업데이트
-            $db->updateFileStatus($fileName, 1);
+            $dbHandler = new \DBManager\DBHandler();
+            $dbHandler->updateFileStatus($fileName, 1);
 
             // 트랜잭션 커밋
             $db->commit();
