@@ -162,8 +162,9 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 $app->get('/download/{fileName}', function (Request $request, Response $response, array $args) {
     $fileName = $args['fileName'];
 
+	$db = $this->get('db');
     // 트랜잭션 시작
-    $this->db->beginTransaction();
+   	$db->beginTransaction();
 
     try {
         $imageHandler = new \DBManager\S3Handler();
@@ -178,18 +179,18 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
             $dbHandler->updateFileStatus($fileName,1);
 
             // 트랜잭션 커밋
-            $this->db->commit();
+            $db->commit();
 
             return $response->withHeader('Content-Type', 'image/jpeg');
         } else {
             // 이미지 다운로드 실패
-            $this->db->rollBack();
+            $db->rollBack();
 
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
         }
     } catch (\Exception $e) {
         // 예외 발생 시 롤백
-        $this->db->rollBack();
+        $db->rollBack();
 
         return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Internal server error.']));
     }
