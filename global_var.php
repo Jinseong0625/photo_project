@@ -6,4 +6,7 @@ define("_PWD_", "newto123");
 define("_DB_", "photoDB");
 define("_PORT_", "3306");
 
+define("AWS_ACCESS_KEY", "AKIAX73O662BZXU6ZJGY");
+define("AWS_SECRET_KEY", "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");
+
 ?>

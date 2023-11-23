@@ -349,5 +349,29 @@ class DBHandler extends DBConnector{
         return $json_data;*/
 
     #}
+
+    public function updateFileStatus($fileName, $status)
+    {
+        try {
+            // 트랜잭션 시작
+            $this->db->begin_transaction();
+
+            // 파일 상태 업데이트
+            $stmt = $this->db->prepare('UPDATE UploadData SET status = ? WHERE filename = ?');
+            $stmt->bind_param('ss', $status, $fileName);
+            $stmt->execute();
+
+            // 트랜잭션 커밋
+            $this->db->commit();
+
+            return true;
+        } catch (\Exception $e) {
+            // 트랜잭션 롤백
+            $this->db->rollback();
+            // 예외 처리...
+
+            return false;
+        }
+    }
 }
     ?>

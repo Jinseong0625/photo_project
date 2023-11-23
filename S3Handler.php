@@ -8,6 +8,7 @@ use Aws\S3\S3Client;
 use Psr\Http\Message\UploadedFileInterface;
 use S3Connector;
 use DBManager\DBHandler;
+use Aws\S3\Exception\S3Exception;
 
 class S3Handler extends S3Connector
 {
@@ -44,24 +45,37 @@ class S3Handler extends S3Connector
     }
 }
 
-    public function downloadImage($fileName)
-    {
-        $s3Client = $this->s3Connector->getS3Client();
+public function downloadImage($fileName)
+{
+    $s3Client = $this->s3Connector->getS3Client();
 
-        // AWS S3 다운로드 로직
-        $s3Bucket = 'photo-bucket-test1';
-        $s3Key = 'photo_test/' . $fileName;
+    // AWS S3 다운로드 로직
+    $s3Bucket = 'photo-bucket-test1';
+    $s3Key = 'photo_test/' . $fileName;
 
+    try {
         $result = $s3Client->getObject([
             'Bucket' => $s3Bucket,
             'Key'    => $s3Key,
         ]);
 
+        // 파일 다운로드 성공 시 파일 상태를 업데이트
+        $dbHandler = new DBHandler();
+        $dbHandler->updateFileStatus($fileName, 1);
+
         return [
-            'error' => 'E0000',
+            'error' => null,
             'data'  => $result['Body'],
         ];
+    } catch (S3Exception $e) {
+        // 예외 처리...
+        return [
+            'error' => 'E0001',
+            'data'  => null,
+        ];
     }
+}
+
 
 }
 ?>

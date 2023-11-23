@@ -162,16 +162,36 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 $app->get('/download/{fileName}', function (Request $request, Response $response, array $args) {
     $fileName = $args['fileName'];
 
-    $imageHandler = new \DBManager\S3Handler();
-    $result = $imageHandler->downloadImage($fileName);
+    // 트랜잭션 시작
+    $this->db->beginTransaction();
 
-    if ($result['error'] === 'E0000') {
-        // 이미지 다운로드 성공
-        $response->getBody()->write($result['data']);
-        return $response->withHeader('Content-Type', 'image/jpeg');
-    } else {
-        // 이미지 다운로드 실패
-        return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
+    try {
+        $imageHandler = new \DBManager\S3Handler();
+        $result = $imageHandler->downloadImage($fileName);
+
+        if ($result['error'] === 'E0000') {
+            // 이미지 다운로드 성공
+            $response->getBody()->write($result['data']);
+
+            // 파일 다운로드 성공 시 상태 업데이트
+            $dbHandler = new DBHandler();
+            $dbHandler->updateFileStatus($fileName,1);
+
+            // 트랜잭션 커밋
+            $this->db->commit();
+
+            return $response->withHeader('Content-Type', 'image/jpeg');
+        } else {
+            // 이미지 다운로드 실패
+            $this->db->rollBack();
+
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
+        }
+    } catch (\Exception $e) {
+        // 예외 발생 시 롤백
+        $this->db->rollBack();
+
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Internal server error.']));
     }
 });
 
