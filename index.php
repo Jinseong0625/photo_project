@@ -163,7 +163,7 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
-    $db = $this->get('db');
+    $db = $request->getAttribute('db');
 
     // 트랜잭션 시작
     $db->beginTransaction();
