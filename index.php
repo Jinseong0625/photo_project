@@ -3,6 +3,7 @@ require __DIR__ . '/global_var.php';
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ .'/DBHandler.php';
 require __DIR__ . '/S3Handler.php';
+require __DIR__ . '/dependencies.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -11,7 +12,9 @@ use Slim\Views\PhpRenderer;
 use DBManager\DBHandler;
 use DBManager\S3Handler;
 
-$app = AppFactory::create();
+$container = $builder->build();
+
+$app = AppFactory::createFromContainer($container);
 $api = new DBHandler();
 
 $app->addBodyParsingMiddleware();
@@ -163,22 +166,23 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
-    $db = $request->getAttribute('db');
+    #$db = $request->getAttribute('db');
+	
+	$db = $this->get('DBHandler');
+	$s3Handler = $this->get('s3Handler');
 
     // 트랜잭션 시작
     $db->beginTransaction();
 
     try {
-        $imageHandler = new \DBManager\S3Handler($db);
-        $result = $imageHandler->downloadImage($fileName);
+        $result = $s3Handler->downloadImage($fileName);
 
         if ($result['error'] === null) {
             // 이미지 다운로드 성공
             $response->getBody()->write($result['data']);
 
             // 파일 다운로드 성공 시 상태 업데이트
-            $dbHandler = new \DBManager\DBHandler();
-            $dbHandler->updateFileStatus($fileName, 1);
+            $db->updateFileStatus($fileName, 1);
 
             // 트랜잭션 커밋
             $db->commit();
