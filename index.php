@@ -210,26 +210,28 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });*/
 
 // 이미지 다운로드 API
-$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
+$app->get('/download/{fileName}', function (Request $request, Response $response, $args) {
     $fileName = $args['fileName'];
 
-    $s3Handler = $container->get('s3Handler');
+    // S3Handler 및 DBHandler 인스턴스 생성
+    $s3Handler = new S3Handler();
+    $dbHandler = new DBHandler();
 
-    try {
-        $result = $s3Handler->downloadImage($fileName);
+    // S3 다운로드
+    $result = $s3Handler->downloadImage($fileName);
 
-        if ($result['error'] === null) {
-            // 이미지 다운로드 성공
-            $response->getBody()->write($result['data']);
+    if ($result['error'] === null) {
+        // 성공 시 파일 상태 업데이트
+        $dbHandler->updateFileStatus($fileName, 1);
 
-            return $response->withHeader('Content-Type', 'image/png');
-        } else {
-            // 이미지 다운로드 실패
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
-        }
-    } catch (\Exception $e) {
-        // 예외 발생 시
-        return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => $e->getMessage()]));
+        // 파일 다운로드 응답
+        $response->getBody()->write($result['data']);
+        return $response->withHeader('Content-Type', 'application/octet-stream');
+    } else {
+        // 실패 시 에러 응답
+        $errorResponse = json_encode(['error' => $result['error']]);
+        $response = $response->withHeader('Content-Type', 'application/json')->withStatus(500)->getBody()->write($errorResponse);
+        return $response;
     }
 });
 
