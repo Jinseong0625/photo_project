@@ -169,14 +169,14 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });
 
 // 이미지 다운로드 API
-$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) {
+$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
     #$db = $request->getAttribute('db');
 	
-	$db = $this->get('DBHandler');
-	$s3Handler = $this->get('s3Handler');
+	$db = $container->get('DBHandler');
+	$s3Handler = $container->get('s3Handler');
 
     // 트랜잭션 시작
     $db->beginTransaction();
