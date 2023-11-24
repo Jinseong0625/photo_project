@@ -169,7 +169,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });
 
 // 이미지 다운로드 API
-$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
+/*$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
     $fileName = $args['fileName'];
 
     // 컨테이너에서 DB 객체 가져오기
@@ -206,6 +206,30 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
         $db->rollBack();
 
         return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Internal server error.']));
+    }
+});*/
+
+// 이미지 다운로드 API
+$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
+    $fileName = $args['fileName'];
+
+    $s3Handler = $container->get('s3Handler');
+
+    try {
+        $result = $s3Handler->downloadImage($fileName);
+
+        if ($result['error'] === null) {
+            // 이미지 다운로드 성공
+            $response->getBody()->write($result['data']);
+
+            return $response->withHeader('Content-Type', 'image/jpeg');
+        } else {
+            // 이미지 다운로드 실패
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
+        }
+    } catch (\Exception $e) {
+        // 예외 발생 시
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => $e->getMessage()]));
     }
 });
 
