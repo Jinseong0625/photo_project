@@ -222,7 +222,7 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
             // 이미지 다운로드 성공
             $response->getBody()->write($result['data']);
 
-            return $response->withHeader('Content-Type', 'image/jpeg');
+            return $response->withHeader('Content-Type', 'image/png');
         } else {
             // 이미지 다운로드 실패
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
@@ -232,7 +232,6 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
         return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => $e->getMessage()]));
     }
 });
-
 
 $app->run();
 

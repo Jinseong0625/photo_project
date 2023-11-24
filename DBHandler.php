@@ -358,7 +358,7 @@ class DBHandler extends DBConnector{
 
             // 파일 상태 업데이트
             $stmt = $this->db->prepare('UPDATE UploadData SET status = ? WHERE filename = ?');
-            $stmt->bind_param('ss', $status, $fileName);
+            $stmt->bind_param("ss", $fileName,$status);
             $stmt->execute();
 
             // 트랜잭션 커밋
