@@ -16,7 +16,6 @@ class S3Handler extends S3Connector
 
     public function __construct()
     {
-        parent::__construct();
         $this->s3Connector = new S3Connector();
     }
 

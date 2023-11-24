@@ -169,7 +169,7 @@ $app->get('/download/{fileName}', function (Request $request, Response $response
     $db->beginTransaction();
 
     try {
-        $imageHandler = new \DBManager\S3Handler();
+        $imageHandler = new \DBManager\S3Handler($db);
         $result = $imageHandler->downloadImage($fileName);
 
         if ($result['error'] === null) {
