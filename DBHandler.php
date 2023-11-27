@@ -365,7 +365,7 @@ class DBHandler extends DBConnector{
         try {
             // 여기서 데이터베이스에서 이미지 데이터를 가져오는 로직을 구현
             // 실제로 사용하는 데이터베이스 및 테이블에 맞게 수정
-            $stmt = $this->db->prepare('SELECT * FROM ImageData WHERE s3_key = ?');
+            $stmt = $this->db->prepare('SELECT * FROM UploadData WHERE s3_key = ?');
             $stmt->execute([$imageKey]);
             return $stmt->fetch();
         } catch (\PDOException $e) {
