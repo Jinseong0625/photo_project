@@ -211,7 +211,13 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 
 // 이미지 다운로드 API
 $app->get('/download', function (Request $request, Response $response, array $args) {
-    $imageKey = $request->getQueryParams()['imageKey'] ?? null;
+    #$imageKey = $request->getQueryParams()['imageKey'] ?? null;
+    $path = $request->getUri()->getPath();
+
+    // path에서 imageKey 값을 추출
+    $parts = explode('/', $path);
+    $imageKey = end($parts);
+
     var_dump($request->getQueryParams());
 
     if (!$imageKey) {
