@@ -212,10 +212,11 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 // 이미지 다운로드 API
 $app->get('/download', function (Request $request, Response $response, array $args) {
     $imageKey = $request->getQueryParams()['imageKey'] ?? null;
+    var_dump($imageKey);
 
     if (!$imageKey) {
         // 필수 파라미터가 누락됨
-        $response->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.']));
+        $response->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.','imageKey' => $imageKey]));
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }
 
