@@ -215,9 +215,8 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
     if (!$imageKey) {
         // 필수 파라미터가 누락됨
-        return $response->withStatus(400)
-            ->withHeader('Content-Type', 'application/json')
-            ->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.']));
+        $response->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.']));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }
 
     $s3Handler = S3Handler::getInstance();
@@ -229,9 +228,8 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
     if (!$imageDataFromS3) {
         // 이미지 정보를 찾을 수 없음
-        return $response->withStatus(404)
-            ->withHeader('Content-Type', 'application/json')
-            ->getBody()->write(json_encode(['error' => 'Image not found.']));
+        $response->getBody()->write(json_encode(['error' => 'Image not found.']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
     }
 
     // 파일의 MIME 타입 확인
@@ -247,6 +245,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     $response->getBody()->write($imageDataFromS3);
     return $response;
 });
+
 
 
 
