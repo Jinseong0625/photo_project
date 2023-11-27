@@ -227,8 +227,13 @@ $app->get('/download', function (Request $request, Response $response, array $ar
                 'Key'    => $imageData['s3_key'],
             ]);
 
+            // 파일의 MIME 타입 확인
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_buffer($finfo, $result['Body']);
+            finfo_close($finfo);
+
             // 파일 다운로드 헤더 설정
-            $response = $response->withHeader('Content-Type', $result['ContentType']);
+            $response = $response->withHeader('Content-Type', $mimeType);
             $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . $imageData['filename'] . '"');
 
             // S3에서 가져온 이미지를 클라이언트로 전송
