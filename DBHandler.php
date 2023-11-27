@@ -371,7 +371,7 @@ class DBHandler extends DBConnector{
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
-            return false;
+            return null;
         }
     }
 }

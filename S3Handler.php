@@ -4,7 +4,7 @@ namespace DBManager;
 
 require __DIR__ .'/S3Connector.php';
 
-use Aws\S3\S3Client;
+#use Aws\S3\S3Client;
 use Psr\Http\Message\UploadedFileInterface;
 use S3Connector;
 use DBManager\DBHandler;
@@ -52,6 +52,26 @@ class S3Handler extends S3Connector
         echo "Image upload failed.";
     }
 }
+
+public function getImageData($imageKey)
+    {
+        try {
+            // S3에서 이미지 데이터 가져오기
+            $s3Bucket = 'photo-bucket-test1';
+
+            $result = $this->s3Client->getObject([
+                'Bucket' => $s3Bucket,
+                'Key'    => $imageKey,
+            ]);
+
+            // 이미지 데이터를 반환
+            return $result['Body']->getContents();
+        } catch (\Exception $e) {
+            // 예외 처리
+            echo 'Error fetching image from S3: ' . $e->getMessage();
+            return null;
+        }
+    }
 
 }
 ?>

@@ -4,7 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Aws\S3\S3Client;
 
 class S3Connector {
-    private $s3Client;
+    protected $s3Client;
 
     function __construct() {
         $this->s3Client = $this->initializeS3();
