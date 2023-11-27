@@ -12,16 +12,25 @@ use Aws\S3\Exception\S3Exception;
 
 class S3Handler extends S3Connector
 {
-    private $s3Connector;
+    private static $instance;
 
     public function __construct()
     {
-        $this->s3Connector = new S3Connector();
+        parent::__construct();
+    }
+
+
+    public static function getInstance()
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function uploadImage(UploadedFileInterface $uploadedFile)
 {
-    $s3Client = $this->s3Connector->getS3Client();
+    $s3Client = self::getInstance()->getS3Client();
 
     // AWS S3 업로드 로직
     $s3Bucket = 'photo-bucket-test1';
@@ -43,38 +52,6 @@ class S3Handler extends S3Connector
         echo "Image upload failed.";
     }
 }
-
-public function downloadImage($fileName)
-{
-    $s3Client = $this->s3Connector->getS3Client();
-
-    // AWS S3 다운로드 로직
-    $s3Bucket = 'photo-bucket-test1';
-    $s3Key = 'photo_test/' . $fileName;
-
-    try {
-        $result = $s3Client->getObject([
-            'Bucket' => $s3Bucket,
-            'Key'    => $s3Key,
-        ]);
-
-        // 파일 다운로드 성공 시 파일 상태를 업데이트
-        $dbHandler = new DBHandler();
-        $dbHandler->updateFileStatus($fileName, 1);
-
-        return [
-            'error' => null,
-            'data'  => $result['Body'],
-        ];
-    } catch (S3Exception $e) {
-        // 예외 처리...
-        return [
-            'error' => 'E0001',
-            'data'  => null,
-        ];
-    }
-}
-
 
 }
 ?>

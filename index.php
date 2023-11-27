@@ -210,28 +210,41 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });*/
 
 // 이미지 다운로드 API
-$app->get('/download/{fileName}', function (Request $request, Response $response, $args) {
-    $fileName = $args['fileName'];
+$app->get('/download', function (Request $request, Response $response, array $args) {
+    $imageKey = $request->getQueryParams()['imageKey'] ?? null;
 
-    // S3Handler 및 DBHandler 인스턴스 생성
-    $s3Handler = new S3Handler();
-    $dbHandler = new DBHandler();
+    if ($imageKey) {
+        $dbHandler = DBHandler::getInstance();  // DBHandler 싱글톤 객체를 가져옴
+        $imageData = $dbHandler->getImageData($imageKey);
 
-    // S3 다운로드
-    $result = $s3Handler->downloadImage($fileName);
+        if ($imageData) {
+            $s3Handler = S3Handler::getInstance();  // S3Handler 싱글톤 객체를 가져옴
+            $s3Client = $s3Handler->getS3Client();
+            $s3Bucket = 'photo-bucket-test1';
 
-    if ($result['error'] === null) {
-        // 성공 시 파일 상태 업데이트
-        $dbHandler->updateFileStatus($fileName, 1);
+            $result = $s3Client->getObject([
+                'Bucket' => $s3Bucket,
+                'Key'    => $imageData['s3_key'],
+            ]);
 
-        // 파일 다운로드 응답
-        $response->getBody()->write($result['data']);
-        return $response->withHeader('Content-Type', 'application/octet-stream');
+            // 파일 다운로드 헤더 설정
+            $response = $response->withHeader('Content-Type', $result['ContentType']);
+            $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . $imageData['filename'] . '"');
+
+            // S3에서 가져온 이미지를 클라이언트로 전송
+            $response->getBody()->write($result['Body']);
+            return $response;
+        } else {
+            // 이미지 정보를 찾을 수 없음
+            return $response->withStatus(404)
+                ->withHeader('Content-Type', 'application/json')
+                ->getBody()->write(json_encode(['error' => 'Image not found.']));
+        }
     } else {
-        // 실패 시 에러 응답
-        $errorResponse = json_encode(['error' => $result['error']]);
-        $response = $response->withHeader('Content-Type', 'application/json')->withStatus(500)->getBody()->write($errorResponse);
-        return $response;
+        // 필수 파라미터가 누락됨
+        return $response->withStatus(400)
+            ->withHeader('Content-Type', 'application/json')
+            ->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.']));
     }
 });
 

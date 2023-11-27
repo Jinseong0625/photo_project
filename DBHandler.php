@@ -7,6 +7,16 @@ use Firebase\JWT\JWT;
 
 class DBHandler extends DBConnector{
 
+    private static $instance;
+
+    public static function getInstance()
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function sp_select_ipadd()
     {
         $error = "E0000";
@@ -350,40 +360,19 @@ class DBHandler extends DBConnector{
 
     #}
 
-    public function updateFileStatus($fileName, $status)
+    public function getImageData($imageKey)
     {
         try {
-            // 트랜잭션 시작
-            $this->db->begin_transaction();
-
-            // 파일 상태 업데이트
-            $stmt = $this->db->prepare('UPDATE UploadData SET status = ? WHERE filename = ?');
-            $stmt->bind_param("ss", $fileName,$status);
-            $stmt->execute();
-
-            // 트랜잭션 커밋
-            $this->db->commit();
-
-            return true;
-        } catch (\Exception $e) {
-            // 트랜잭션 롤백
-            $this->db->rollback();
-            // 예외 처리...
-
+            // 여기서 데이터베이스에서 이미지 데이터를 가져오는 로직을 구현
+            // 실제로 사용하는 데이터베이스 및 테이블에 맞게 수정
+            $stmt = $this->db->prepare('SELECT * FROM ImageData WHERE s3_key = ?');
+            $stmt->execute([$imageKey]);
+            return $stmt->fetch();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
             return false;
         }
-    }
-
-    public function beginTransaction() {
-        $this->db->begin_transaction();
-    }
-
-    public function commit() {
-        $this->db->commit();
-    }
-
-    public function rollBack() {
-        $this->db->rollback();
     }
 }
     ?>
