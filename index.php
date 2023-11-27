@@ -212,7 +212,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 // 이미지 다운로드 API
 $app->get('/download', function (Request $request, Response $response, array $args) {
     $imageKey = $request->getQueryParams()['imageKey'] ?? null;
-    var_dump($imageKey);
+    var_dump($request->getQueryParams());
 
     if (!$imageKey) {
         // 필수 파라미터가 누락됨
