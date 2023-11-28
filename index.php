@@ -210,7 +210,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });*/
 
 // 이미지 다운로드 API
-$app->get('/download', function (Request $request, Response $response, array $args) {
+/*$app->get('/download', function (Request $request, Response $response, array $args) {
     #$imageKey = $request->getQueryParams()['imageKey'] ?? null;
     $path = $request->getUri()->getPath();
 
@@ -251,8 +251,44 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     // S3에서 가져온 이미지를 클라이언트로 전송
     $response->getBody()->write($imageDataFromS3);
     return $response;
-});
+});*/
 
+// 이미지 다운로드 API
+$app->get('/download/{filename}', function (Request $request, Response $response, array $args) {
+    $filename = $args['filename'];
+
+    if (!$filename) {
+        // 필수 파라미터가 누락됨
+        $response->getBody()->write(json_encode(['error' => 'Missing filename parameter.']));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    $s3Handler = S3Handler::getInstance();
+    $s3Client = $s3Handler->getS3Client();
+    $s3Bucket = 'photo-bucket-test1';
+
+    // 수정된 부분: S3 스토리지에서 직접 이미지 데이터 가져오기
+    $imageDataFromS3 = $s3Handler->getImageData("photo_test/{$filename}");
+
+    if (!$imageDataFromS3) {
+        // 이미지 정보를 찾을 수 없음
+        $response->getBody()->write(json_encode(['error' => 'Image not found.']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    }
+
+    // 파일의 MIME 타입 확인
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_buffer($finfo, $imageDataFromS3);
+    finfo_close($finfo);
+
+    // 파일 다운로드 헤더 설정
+    $response = $response->withHeader('Content-Type', $mimeType);
+    $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+    // S3에서 가져온 이미지를 클라이언트로 전송
+    $response->getBody()->write($imageDataFromS3);
+    return $response;
+});
 
 
 
