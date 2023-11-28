@@ -8,7 +8,7 @@
         "http-interop/http-factory-guzzle": "^1.2",
         "laminas/laminas-diactoros": "^2.24",
         "slim/php-view": "^3.2",
-        "phpseclib/phpseclib": "~3.0",
+        "phpseclib/phpseclib": "^3.0",
         "ext-ssh2": "*",
         "firebase/php-jwt": "^5.5",
         "tuupola/slim-jwt-auth": "3.5",
