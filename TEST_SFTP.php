@@ -1,6 +1,8 @@
 <?php
 
-use phpseclib\Net\SFTP;
+#use phpseclib\Net\SFTP;
+use phpseclib3\Net\SFTP;
+use phpseclib3\Crypt\RSA;
 
 require __DIR__ . '/vendor/autoload.php'; // Composer autoload 파일
 
@@ -13,8 +15,9 @@ $pemFilePath = '/home/ubuntu/FirstTestKey.pem';
 // SFTP 객체 생성
 $sftp = new SFTP($sftpHost, $sftpPort);
 
-$key = new \phpseclib\Crypt\RSA();
-$key->loadKey(file_get_contents($pemFilePath));
+// RSA 객체 생성 및 키 로드
+$key = new RSA();
+$key->load(file_get_contents($pemFilePath));
 
 // SFTP 연결
 if (!$sftp->login($sftpUsername, $Key)) {
@@ -22,8 +25,8 @@ if (!$sftp->login($sftpUsername, $Key)) {
 }
 
 // 업로드
-$localFile = 'local_file_path.txt';
-$remoteFile = 'remote_file_path.txt';
+$localFile = 'C:/Users/chomk/Downloads/수정사항.png';
+$remoteFile = '/home/ubuntu/수정사항.png';
 
 if ($sftp->put($remoteFile, $localFile, SFTP::SOURCE_LOCAL_FILE)) {
     echo "File uploaded successfully.\n";
@@ -32,8 +35,8 @@ if ($sftp->put($remoteFile, $localFile, SFTP::SOURCE_LOCAL_FILE)) {
 }
 
 // 다운로드
-$localDownloadFile = 'local_download_file.txt';
-$remoteDownloadFile = 'remote_download_file.txt';
+$localDownloadFile = 'C:/Users/chomk/Downloads/수정사항.png';
+$remoteDownloadFile = '/home/ubuntu/수정사항.png';
 
 if ($sftp->get($remoteDownloadFile, $localDownloadFile)) {
     echo "File downloaded successfully.\n";
