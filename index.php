@@ -155,7 +155,8 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     // Check if image file is uploaded
     if (isset($uploadedFiles['image'])) {
         $imageHandler = new \DBManager\S3Handler();
-        $result = $imageHandler->uploadImage($uploadedFiles['image']);
+        $result = $imageHandler->uploadImage($uploadedFiles['image'], $response);
+        return $result;
 
         if ($result['success']) {
             // 이미지 업로드 및 메타데이터 저장이 성공하면 응답

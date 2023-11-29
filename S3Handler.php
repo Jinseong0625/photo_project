@@ -8,6 +8,7 @@ require __DIR__ .'/S3Connector.php';
 use Psr\Http\Message\UploadedFileInterface;
 use S3Connector;
 use DBManager\DBHandler;
+use \Psr\Http\Message\ResponseInterface as Response;
 use Aws\S3\Exception\S3Exception;
 
 class S3Handler extends S3Connector
@@ -28,7 +29,7 @@ class S3Handler extends S3Connector
         return self::$instance;
     }
 
-    public function uploadImage(UploadedFileInterface $uploadedFile)
+    public function uploadImage(UploadedFileInterface $uploadedFile, Response $response)
 {
     $s3Client = self::getInstance()->getS3Client();
 
@@ -49,12 +50,15 @@ try {
         // 이미지 업로드가 성공하면 DB에 메타데이터 저장
         $dbHandler = new DBHandler();
         $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key);
-        echo "Image uploaded successfully.";
-    } else {
-        echo "Image upload failed.";
-    }
+        $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            throw new \Exception("S3 upload failed");
+        }
 } catch (\Exception $e) {
-    echo 'Error during S3 upload: ' . $e->getMessage();
+    // S3 업로드 실패 시 에러 응답
+    $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+    return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
 }
 }
 
