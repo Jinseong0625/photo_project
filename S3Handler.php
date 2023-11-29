@@ -37,6 +37,8 @@ class S3Handler extends S3Connector
     $s3Folder = 'photo_test/';
     $s3Key = $s3Folder . $uploadedFile->getClientFilename();
 
+
+try {
     $result = $s3Client->putObject([
         'Bucket' => $s3Bucket,
         'Key'    => $s3Key,
@@ -51,6 +53,9 @@ class S3Handler extends S3Connector
     } else {
         echo "Image upload failed.";
     }
+} catch (\Exception $e) {
+    echo 'Error during S3 upload: ' . $e->getMessage();
+}
 }
 
 public function getImageData($imageKey)
