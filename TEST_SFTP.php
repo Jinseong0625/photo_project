@@ -49,7 +49,7 @@ if (!$sftp->login($sftpUsername, $key)) {
 
 // 업로드
 $localFile = 'C:/Users/chomk/Downloads/image.png';
-$remoteFile = '/home/ubuntu/image.png';
+$remoteFile = '/home/ubuntu/image/image.png';
 uploadFile($sftp, $localFileForUpload, $remoteFileForUpload);
 
 /*if ($sftp->put($remoteFile, $localFile, SFTP::SOURCE_LOCAL_FILE)) {
