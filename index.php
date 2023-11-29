@@ -26,6 +26,7 @@ $container['s3'] = function (ContainerInterface $container){
 $api = new DBHandler();
 
 $app->addBodyParsingMiddleware();
+$app->addErrorMiddleware(true, true, true);
 #$app->setBasePath("/test");
 
 session_start();
