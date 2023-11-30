@@ -85,10 +85,12 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
             #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
             $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key,$ipAddress ,$ipIdx);
             
-            return ['success' => true];
-        } else {
-            throw new \Exception("S3 upload failed");
-        }
+        // 직접 JSON 응답 작성
+        $response->getBody()->write(json_encode(['success' => true]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    } else {
+        throw new \Exception("S3 upload failed");
+    }
     } catch (\Exception $e) {
         // S3 업로드 실패 시 에러 응답
         return ['success' => false, 'error' => 'Failed to upload image.'];
