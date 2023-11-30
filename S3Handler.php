@@ -62,7 +62,7 @@ try {
 }
 }*/
 
-public function uploadImage(UploadedFileInterface $uploadedFile, Response $response, $kioskIp)
+public function uploadImage(UploadedFileInterface $uploadedFile, Response $response,$ipAddress)
 {
     $s3Client = self::getInstance()->getS3Client();
 
@@ -81,8 +81,9 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
         if ($result) {
             // 이미지 업로드가 성공하면 DB에 메타데이터 및 키오스크 IP 저장
             $dbHandler = new DBHandler();
-            $ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
-            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipIdx);
+            $ipIdx = $dbHandler->registerKiosk($ipAddress);
+            #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
+            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key,$ipAddress ,$ipIdx);
             
             return ['success' => true];
         } else {
