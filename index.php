@@ -156,13 +156,19 @@ $app->post('/kioskip', function (Request $request, Response $response, array $ar
     if (isset($parsedBody['ip_address'])) {
         $ipAddress = $parsedBody['ip_address'];
         
-        // Save the kiosk IP address to the database
+        // Save the kiosk IP address to the database and retrieve ip_idx
         $dbHandler = new DBHandler();
-        $dbHandler->registerKiosk($ipAddress);
+        $ipIdx = $dbHandler->registerKiosk($ipAddress);
 
-        // 직접 JSON 응답 작성
-        $response->getBody()->write(json_encode(['message' => 'Kiosk registered successfully.']));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        if ($ipIdx !== null) {
+            // 직접 JSON 응답 작성
+            $response->getBody()->write(json_encode(['message' => 'Kiosk registered successfully.', 'ip_idx' => $ipIdx]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            // Handle the case where ip_idx is not available
+            $response->getBody()->write(json_encode(['error' => 'Failed to retrieve ip_idx.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
     } else {
         // 직접 JSON 응답 작성
         $response->getBody()->write(json_encode(['error' => 'Missing required parameters.']));
