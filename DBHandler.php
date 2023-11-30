@@ -378,7 +378,7 @@ class DBHandler extends DBConnector{
     public function updateFileStatus($filename)
     {
         try {
-            $stmt = $this->db->prepare('UPDATE YourTableName SET status = 1 WHERE filename = ?');
+            $stmt = $this->db->prepare('UPDATE UploadData SET status = 1 WHERE filename = ?');
             $stmt->bind_param("s", $filename);
             $stmt->execute();
         } catch (\PDOException $e) {
