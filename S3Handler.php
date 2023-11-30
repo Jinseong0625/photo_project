@@ -78,10 +78,17 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
             'Body'   => $uploadedFile->getStream(),
         ]);
 
+        // 추가된 로깅
+        error_log("IP Address: " . $ipAddress);
+
         if ($result) {
             // 이미지 업로드가 성공하면 DB에 메타데이터 및 키오스크 IP 저장
             $dbHandler = new DBHandler();
             $ipIdx = $dbHandler->registerKiosk($ipAddress);
+
+            // 추가된 로깅
+            error_log("IP Index from registerKiosk: " . $ipIdx);
+            
             #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
             $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key,$ipAddress ,$ipIdx);
             
