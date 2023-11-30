@@ -148,6 +148,28 @@ $app->get('/yeartotal/{ipidx}', function ($request, $response, $args) use($api)
 	return $response;
 });
 
+// 키오스크 등록 API
+$app->post('/kioskip', function (Request $request, Response $response, array $args) {
+    $parsedBody = $request->getParsedBody();
+
+    // Check if required parameters are present
+    if (isset($parsedBody['ip_address'])) {
+        $ipAddress = $parsedBody['ip_address'];
+        
+        // Save the kiosk IP address to the database
+        $dbHandler = new DBHandler();
+        $dbHandler->registerKiosk($ipAddress);
+
+        // 직접 JSON 응답 작성
+        $response->getBody()->write(json_encode(['message' => 'Kiosk registered successfully.']));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    } else {
+        // 직접 JSON 응답 작성
+        $response->getBody()->write(json_encode(['error' => 'Missing required parameters.']));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+    }
+});
+
 // 이미지 업로드 API
 $app->post('/upload', function (Request $request, Response $response, array $args) {
     $uploadedFiles = $request->getUploadedFiles();
