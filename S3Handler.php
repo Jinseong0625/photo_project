@@ -84,13 +84,15 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
         if ($result) {
             // 이미지 업로드가 성공하면 DB에 메타데이터 및 키오스크 IP 저장
             $dbHandler = new DBHandler();
+            error_log("Registering kiosk...");
             $ipIdx = $dbHandler->registerKiosk($ipAddress);
 
             // 추가된 로깅
             error_log("IP Index from registerKiosk: " . $ipIdx);
             
             #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
-            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key,$ipAddress ,$ipIdx);
+            error_log("Saving metadata...");
+            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipAddress, $ipIdx);
             
         // 직접 JSON 응답 작성
         $response->getBody()->write(json_encode(['success' => true]));
