@@ -183,7 +183,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     // Check if image file is uploaded
     if (isset($uploadedFiles['image'])) {
         $imageHandler = new \DBManager\S3Handler();
-        $result = $imageHandler->uploadImage($uploadedFiles['image'], $response);
+        $result = $imageHandler->uploadImage($uploadedFiles['image'], $response , $_SERVER['REMOTE_ADDR']);
         return $result;
 
         if ($result['success']) {

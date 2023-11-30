@@ -340,16 +340,32 @@ class DBHandler extends DBConnector{
         }
     }
 
-    public function saveMetadata($filename, $s3Key)
-    {   
-        try {
-            $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key) VALUES (?, ?)');
-            $stmt->bind_param("ss", $filename, $s3Key); // 바인딩 수정
-            $stmt->execute();
-        } catch (\PDOException $e) {
-            // Handle the exception as needed, e.g., log the error.
-            echo 'Database error: ' . $e->getMessage();
-        }
+    public function getIpIdxByIp($kioskIp)
+    {
+    try {
+        $stmt = $this->db->prepare('SELECT ip_idx FROM IpAdd WHERE ip_address = ?');
+        $stmt->bind_param("s", $kioskIp);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['ip_idx'];
+    } catch (\PDOException $e) {
+        // Handle the exception as needed, e.g., log the error.
+        echo 'Database error: ' . $e->getMessage();
+        return null;
+    }
+    }
+
+    public function saveMetadata($filename, $s3Key, $ipIdx)
+    {
+    try {
+        $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key, ip_idx) VALUES (?, ?, ?)');
+        $stmt->bind_param("ssi", $filename, $s3Key, $ipIdx);
+        $stmt->execute();
+    } catch (\PDOException $e) {
+        // Handle the exception as needed, e.g., log the error.
+        echo 'Database error: ' . $e->getMessage();
+    }
     }
 
     public function getUploadData($udIdx) {
