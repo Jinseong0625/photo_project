@@ -306,39 +306,32 @@ class DBHandler extends DBConnector{
     }
     // 키오스크 ip 저장 DB 핸들러
     public function registerKiosk($ipAddress)
-    {
-        try {
-            // Check if the IP address already exists in the table
-            $stmt = $this->db->prepare('SELECT ip_idx FROM IpAdd WHERE ip_address = ?');
-            $stmt->bind_param("s", $ipAddress);
-            $stmt->execute();
-            $result = $stmt->get_result();
-    
-            if ($result->num_rows > 0) {
-                // IP address already exists, retrieve the existing ip_idx
-                $row = $result->fetch_assoc();
-                $ipIdx = $row['ip_idx'];
-                echo 'Kiosk already registered. ip_idx: ' . $ipIdx;
-    
-                // Return the ip_idx value
-                return $ipIdx;
-            }
-    
-            // Insert the IP address into the IpAdd table
-            $stmt = $this->db->prepare('INSERT INTO IpAdd (ip_address) VALUES (?)');
-            $stmt->bind_param("s", $ipAddress);
-            $stmt->execute();
-    
-            // Return the auto-generated ip_idx
-            $ipIdx = $stmt->insert_id;
-            echo 'Kiosk registered successfully. ip_idx: ' . $ipIdx;
-            return $ipIdx;
-        } catch (\PDOException $e) {
-            // Handle the exception as needed, e.g., log the error.
-            echo 'Database error: ' . $e->getMessage();
-            return null;
+{
+    try {
+        // Check if the IP address already exists in the table
+        $stmt = $this->db->prepare('SELECT ip_idx FROM IpAdd WHERE ip_address = ?');
+        $stmt->bind_param("s", $ipAddress);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // IP address already exists, return the ip_idx
+            $row = $result->fetch_assoc();
+            return $row['ip_idx'];
         }
+    
+        // Insert the IP address into the IpAdd table
+        $stmt = $this->db->prepare('INSERT INTO IpAdd (ip_address) VALUES (?)');
+        $stmt->bind_param("s", $ipAddress);
+        $stmt->execute();
+
+        // Return the last inserted id (ip_idx)
+        return $stmt->insert_id;
+    } catch (\PDOException $e) {
+        // Handle the exception as needed, e.g., log the error.
+        echo 'Database error: ' . $e->getMessage();
     }
+}
 
     public function getIpIdxByIp($kioskIp)
     {
