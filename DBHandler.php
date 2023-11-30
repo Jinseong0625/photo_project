@@ -317,16 +317,20 @@ class DBHandler extends DBConnector{
         if ($result->num_rows > 0) {
             // IP address already exists, return the ip_idx
             $row = $result->fetch_assoc();
-            return $row['ip_idx'];
+            $ipIdx = $row['ip_idx'];
+            echo "IP address already exists. ip_idx: $ipIdx\n";
+            return $ipIdx;
         }
-    
+
         // Insert the IP address into the IpAdd table
         $stmt = $this->db->prepare('INSERT INTO IpAdd (ip_address) VALUES (?)');
         $stmt->bind_param("s", $ipAddress);
         $stmt->execute();
 
         // Return the last inserted id (ip_idx)
-        return $stmt->insert_id;
+        $ipIdx = $stmt->insert_id;
+        echo "IP address inserted. ip_idx: $ipIdx\n";
+        return $ipIdx;
     } catch (\PDOException $e) {
         // Handle the exception as needed, e.g., log the error.
         echo 'Database error: ' . $e->getMessage();
