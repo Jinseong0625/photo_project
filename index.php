@@ -289,6 +289,11 @@ $app->get('/download/{filename}', function (Request $request, Response $response
 
     // S3에서 가져온 이미지를 클라이언트로 전송
     $response->getBody()->write($imageDataFromS3);
+
+    // 파일 상태를 업데이트
+    $dbHandler = new DBHandler();
+    $dbHandler->updateFileStatus($filename);
+
     return $response;
 });
 

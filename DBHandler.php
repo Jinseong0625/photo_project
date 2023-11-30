@@ -374,5 +374,17 @@ class DBHandler extends DBConnector{
             return null;
         }
     }
+
+    public function updateFileStatus($filename)
+    {
+        try {
+            $stmt = $this->db->prepare('UPDATE YourTableName SET status = 1 WHERE filename = ?');
+            $stmt->bind_param("s", $filename);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+        }
+    }
 }
     ?>
