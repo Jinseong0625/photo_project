@@ -356,6 +356,7 @@ class DBHandler extends DBConnector{
     public function saveMetadata($filename, $s3Key, $ipIdx)
     {
     try {
+        echo $ipIdx;
         $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key, ip_idx) VALUES (?, ?, ?)');
         $stmt->bind_param("ssi", $filename, $s3Key, $ipIdx);
         $stmt->execute();
