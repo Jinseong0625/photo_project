@@ -356,7 +356,6 @@ class DBHandler extends DBConnector{
     public function saveMetadata($filename, $s3Key, $ipIdx)
     {
     try {
-        echo $ipIdx;
         $stmt = $this->db->prepare('INSERT INTO UploadData (filename, s3_key, ip_idx) VALUES (?, ?, ?)');
         $stmt->bind_param("ssi", $filename, $s3Key, $ipIdx);
         $stmt->execute();
@@ -365,6 +364,18 @@ class DBHandler extends DBConnector{
         echo 'Database error: ' . $e->getMessage();
     }
     }
+
+    public function updateTotalLog($ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement)
+{
+    try {
+        $stmt = $this->db->prepare('INSERT INTO TotalLog (ipidx, day_total, week_total, month_total, year_total) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE day_total = day_total + ?, week_total = week_total + ?, month_total = month_total + ?, year_total = year_total + ?');
+        $stmt->bind_param("iiiiiiii", $ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement);
+        $stmt->execute();
+    } catch (\PDOException $e) {
+        // Handle the exception as needed, e.g., log the error.
+        echo 'Database error: ' . $e->getMessage();
+    }
+}
 
     public function getUploadData($udIdx) {
         try {

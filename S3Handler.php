@@ -92,8 +92,10 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
             
             #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
             error_log("Saving metadata...");
-            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipIdx);
+            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipAddress, $ipIdx);
             
+            $dbHandler->updateTotalLog($ipIdx, 1, 1, 1, 1);
+
         // 직접 JSON 응답 작성
         $response->getBody()->write(json_encode(['success' => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
