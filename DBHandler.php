@@ -457,7 +457,11 @@ class DBHandler extends DBConnector{
             $result = $stmt->fetch();
 
             // 추가: 쿼리 결과 로그에 기록
-        error_log("Query Result: " . json_encode($result));
+            if ($result !== false) {
+                error_log("Query Result: " . json_encode($result));
+            } else {
+                error_log("Query Result: No pending file found");
+            }
 
         return $result;
         } catch (\PDOException $e) {
