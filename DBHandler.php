@@ -451,18 +451,9 @@ class DBHandler extends DBConnector{
     {
         try {
             // 수정: status가 0인 파일 중 ud_idx가 가장 낮은 파일 가져오기
-            $stmt = $this->db->prepare('SELECT s3_key FROM UploadData WHERE status = 0 ORDER BY ud_idx LIMIT 1');
+            $stmt = $this->db->prepare('SELECT s3_key FROM UploadData WHERE status = 0 ORDER BY ud_idx LIMIT 1 ASC');
             $stmt->execute();
-            #return $stmt->fetch();
-            $result = $stmt->fetch();
-
-            // 추가: 쿼리 결과 로그에 기록
-            error_log("Query Result: " . json_encode($result));
-
-            // 결과가 있는 경우에는 해당 값을 반환
-            if ($result) {
-                return $result['s3_key'];
-        }
+            return $stmt->fetch();
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();

@@ -329,49 +329,53 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 // 다운로드 받게 하는 api 누끼따는 서버에서 이걸 편집이 끝났을때 이걸 호출하면
 // 편집이 필요한 사진 파일을 바로 받을 수 있는거임
 $app->get('/download', function (Request $request, Response $response, array $args) {
-    // 수정된 부분: 편집이 필요한 파일 가져오기
-    $dbHandler = new DBHandler();
-    $pendingFile = $dbHandler->getPendingFile();
+    try {
+        // 수정된 부분: status가 0이면서 가장 낮은 ud_idx의 s3_key 가져오기
+        $dbHandler = new DBHandler();
+        $pendingFile = $dbHandler->getPendingFile();
 
-    error_log("PendingFile: " . json_encode($pendingFile));
+        if (!$pendingFile) {
+            // 편집이 필요한 파일이 없음
+            $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
 
-    if (!$pendingFile || !isset($pendingFile['s3_key'])) {
-        // 편집이 필요한 파일이 없거나 s3_key가 없는 경우
-        $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
-        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        // 편집이 필요한 파일의 S3 키 가져오기
+        $imageKey = $pendingFile['s3_key'];
+
+        $s3Handler = S3Handler::getInstance();
+        $s3Bucket = 'photo-bucket-test1';
+
+        // S3에서 가져온 이미지를 클라이언트로 전송
+        $imageDataFromS3 = $s3Handler->getImageData($imageKey);
+
+        if (!$imageDataFromS3) {
+            // 이미지 정보를 찾을 수 없음
+            $response->getBody()->write(json_encode(['error' => 'Image not found.']));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
+        // 파일의 MIME 타입 확인
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_buffer($finfo, $imageDataFromS3);
+        finfo_close($finfo);
+
+        // 파일 다운로드 헤더 설정
+        $response = $response->withHeader('Content-Type', $mimeType);
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($imageKey) . '"');
+
+        // S3에서 가져온 이미지를 클라이언트로 전송
+        $response->getBody()->write($imageDataFromS3);
+
+        // 파일 상태를 업데이트
+        $dbHandler->updateFileStatus($imageKey);
+
+        return $response;
+    } catch (\Exception $e) {
+        // Handle the exception as needed, e.g., log the error.
+        echo 'Error: ' . $e->getMessage();
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
     }
-
-    // 수정된 부분: 편집이 필요한 파일의 S3 키 가져오기
-    $imageKey = $pendingFile['s3_key'];
-
-    error_log("ImageKey: " . json_encode($imageKey));
-
-    // S3에서 가져온 이미지를 클라이언트로 전송
-    $s3Handler = S3Handler::getInstance(); // S3Handler 인스턴스를 가져오기
-    $imageDataFromS3 = $s3Handler->getImageData($imageKey);
-
-    if (!$imageDataFromS3) {
-        // 이미지 정보를 찾을 수 없음
-        $response->getBody()->write(json_encode(['error' => 'Image not found.']));
-        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-    }
-
-    // 파일의 MIME 타입 확인
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_buffer($finfo, $imageDataFromS3);
-    finfo_close($finfo);
-
-    // 파일 다운로드 헤더 설정
-    $response = $response->withHeader('Content-Type', $mimeType);
-    $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($imageKey) . '"');
-
-    // S3에서 가져온 이미지를 클라이언트로 전송
-    $response->getBody()->write($imageDataFromS3);
-
-    // 파일 상태를 업데이트
-    $dbHandler->updateFileStatus($imageKey);
-
-    return $response;
 });
 
 
