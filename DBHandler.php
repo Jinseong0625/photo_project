@@ -451,7 +451,7 @@ class DBHandler extends DBConnector{
     {
         try {
             // 수정: status가 0인 파일 중 ud_idx가 가장 낮은 파일 가져오기
-            $stmt = $this->db->prepare('SELECT * FROM UploadData WHERE status = 0 ORDER BY ud_idx LIMIT 1');
+            $stmt = $this->db->prepare('SELECT s3_key FROM UploadData WHERE status = 0 ORDER BY ud_idx LIMIT 1');
             $stmt->execute();
             #return $stmt->fetch();
             $result = $stmt->fetch();
