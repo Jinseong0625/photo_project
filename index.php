@@ -344,7 +344,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $s3Bucket = 'photo-bucket-test1';
 
         // S3에서 가져온 이미지를 클라이언트로 전송
-        $imageKey = "photo_test/$filename";
+        $imageKey = "photo_test/" . $filename['filename']; 
         $imageDataFromS3 = $s3Handler->getImageData($imageKey);
 
         if (!$imageDataFromS3) {
