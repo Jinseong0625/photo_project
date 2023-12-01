@@ -334,7 +334,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $dbHandler = new DBHandler();
         $filename = $dbHandler->getPendingFile();
 
-        if (!$filename) {
+        /*if (!$filename) {
             // 편집이 필요한 파일이 없음
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
@@ -346,7 +346,22 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         // S3에서 가져온 이미지를 클라이언트로 전송
         $imageKey = "photo_test/" . $filename['filename'];
         error_log("Image Key: " . $imageKey);
-        $imageDataFromS3 = $s3Handler->getImageData($imageKey);
+        $imageDataFromS3 = $s3Handler->getImageData($imageKey);*/
+
+        if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
+            // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
+            $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
+        // $filename['filename'] 값이 예상대로 들어왔는지 로그로 확인
+        error_log("Filename: " . $filename['filename']);
+
+        $s3Handler = S3Handler::getInstance();
+        $s3Bucket = 'photo-bucket-test1';
+
+        // S3에서 가져온 이미지를 클라이언트로 전송
+        $imageDataFromS3 = $s3Handler->getImageData("photo_test/" . $filename['filename']);
 
         if (!$imageDataFromS3) {
             // 이미지 정보를 찾을 수 없음
