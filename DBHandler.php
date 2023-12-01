@@ -463,7 +463,7 @@ class DBHandler extends DBConnector{
                 error_log("Query Result: No pending file found");
             }
 
-        return $result;
+            return $result !== false ? $result : false;
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
