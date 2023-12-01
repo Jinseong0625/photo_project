@@ -325,6 +325,9 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     return $response;
 }); */
 
+// 호출시 편집이 필요한 파일이 존재할 경우 DB에서 키값이 낮은 순서대로 사진 데이터를
+// 다운로드 받게 하는 api 누끼따는 서버에서 이걸 편집이 끝났을때 이걸 호출하면
+// 편집이 필요한 사진 파일을 바로 받을 수 있는거임
 $app->get('/download', function (Request $request, Response $response, array $args) {
     // 수정된 부분: 편집이 필요한 파일 가져오기
     $dbHandler = new DBHandler();
@@ -338,6 +341,8 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
     // 수정된 부분: 편집이 필요한 파일의 S3 키 가져오기
     $imageKey = $pendingFile['s3_key'];
+
+    error_log("ImageKey: " . $imageKey);
 
     // S3에서 가져온 이미지를 클라이언트로 전송
     $s3Handler = S3Handler::getInstance(); // S3Handler 인스턴스를 가져오기
