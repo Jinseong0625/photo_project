@@ -344,7 +344,8 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $s3Bucket = 'photo-bucket-test1';
 
         // S3에서 가져온 이미지를 클라이언트로 전송
-        $imageKey = "photo_test/" . $filename['filename']; 
+        $imageKey = "photo_test/" . $filename['filename'];
+        error_log("Image Key: " . $imageKey);
         $imageDataFromS3 = $s3Handler->getImageData($imageKey);
 
         if (!$imageDataFromS3) {
@@ -360,13 +361,13 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
         // 파일 다운로드 헤더 설정
         $response = $response->withHeader('Content-Type', $mimeType);
-        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($imageKey) . '"');
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($filename) . '"');
 
         // S3에서 가져온 이미지를 클라이언트로 전송
         $response->getBody()->write($imageDataFromS3);
 
         // 파일 상태를 업데이트
-        $dbHandler->updateFileStatus($imageKey);
+        $dbHandler->updateFileStatus($filename);
 
         return $response;
     } catch (\Exception $e) {
