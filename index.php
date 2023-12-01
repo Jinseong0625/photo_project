@@ -342,7 +342,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     // 수정된 부분: 편집이 필요한 파일의 S3 키 가져오기
     $imageKey = $pendingFile['s3_key'];
 
-    error_log("ImageKey: " . $imageKey);
+    error_log("ImageKey: " . json_encode($imageKey));
 
     // S3에서 가져온 이미지를 클라이언트로 전송
     $s3Handler = S3Handler::getInstance(); // S3Handler 인스턴스를 가져오기
