@@ -369,7 +369,7 @@ class DBHandler extends DBConnector{
 {
     try {
         $stmt = $this->db->prepare('INSERT INTO TotalLog (ipidx, day_total, week_total, month_total, year_total) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE day_total = day_total + ?, week_total = week_total + ?, month_total = month_total + ?, year_total = year_total + ?');
-        $stmt->bind_param("iiiiiiii", $ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement);
+        $stmt->bind_param("iiiiiiiii", $ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement);
         $stmt->execute();
     } catch (\PDOException $e) {
         // Handle the exception as needed, e.g., log the error.
