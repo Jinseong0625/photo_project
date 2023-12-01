@@ -457,13 +457,12 @@ class DBHandler extends DBConnector{
             $result = $stmt->fetch();
 
             // 추가: 쿼리 결과 로그에 기록
-            if ($result !== false) {
-                error_log("Query Result: " . json_encode($result));
-            } else {
-                error_log("Query Result: No pending file found");
-            }
+            error_log("Query Result: " . json_encode($result));
 
-            return $result !== false ? $result : false;
+            // 결과가 있는 경우에는 해당 값을 반환
+            if ($result) {
+                return $result['s3_key'];
+        }
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
