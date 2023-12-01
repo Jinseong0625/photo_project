@@ -332,22 +332,19 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     try {
         // 수정된 부분: status가 0이면서 가장 낮은 ud_idx의 s3_key 가져오기
         $dbHandler = new DBHandler();
-        $pendingFile = $dbHandler->getPendingFile();
+        $filename = $dbHandler->getPendingFile();
 
-        if (!$pendingFile) {
+        if (!$filename) {
             // 편집이 필요한 파일이 없음
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
 
-        // 편집이 필요한 파일의 S3 키 가져오기
-        $imageKey = $pendingFile['s3_key'];
-
         $s3Handler = S3Handler::getInstance();
         $s3Bucket = 'photo-bucket-test1';
 
         // S3에서 가져온 이미지를 클라이언트로 전송
-        $imageDataFromS3 = $s3Handler->getImageData($imageKey);
+        $imageDataFromS3 = $s3Handler->getImageData("photo_test/$filename");
 
         if (!$imageDataFromS3) {
             // 이미지 정보를 찾을 수 없음
@@ -362,13 +359,13 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
         // 파일 다운로드 헤더 설정
         $response = $response->withHeader('Content-Type', $mimeType);
-        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($imageKey) . '"');
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($filename) . '"');
 
         // S3에서 가져온 이미지를 클라이언트로 전송
         $response->getBody()->write($imageDataFromS3);
 
         // 파일 상태를 업데이트
-        $dbHandler->updateFileStatus($imageKey);
+        $dbHandler->updateFileStatus($filename);
 
         return $response;
     } catch (\Exception $e) {
