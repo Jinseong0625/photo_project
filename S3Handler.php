@@ -29,38 +29,7 @@ class S3Handler extends S3Connector
         return self::$instance;
     }
 
-   /* public function uploadImage(UploadedFileInterface $uploadedFile, Response $response)
-{
-    $s3Client = self::getInstance()->getS3Client();
 
-    // AWS S3 업로드 로직
-    $s3Bucket = 'photo-bucket-test1';
-    $s3Folder = 'photo_test/';
-    $s3Key = $s3Folder . $uploadedFile->getClientFilename();
-
-
-try {
-    $result = $s3Client->putObject([
-        'Bucket' => $s3Bucket,
-        'Key'    => $s3Key,
-        'Body'   => $uploadedFile->getStream(),
-    ]);
-
-    if ($result) {
-        // 이미지 업로드가 성공하면 DB에 메타데이터 저장
-        $dbHandler = new DBHandler();
-        $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key);
-        $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            throw new \Exception("S3 upload failed");
-        }
-} catch (\Exception $e) {
-    // S3 업로드 실패 시 에러 응답
-    $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
-    return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
-}
-}*/
 
 public function uploadImage(UploadedFileInterface $uploadedFile, Response $response,$ipAddress)
 {
@@ -92,7 +61,7 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
             
             #$ipIdx = $dbHandler->getIpIdxByIp($kioskIp); // 키오스크 IP로부터 ip_idx를 얻어옴
             error_log("Saving metadata...");
-            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipAddress, $ipIdx);
+            $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key, $ipIdx);
             
             $dbHandler->updateTotalLog($ipIdx, 1, 1, 1, 1);
 
@@ -129,4 +98,37 @@ public function getImageData($imageKey)
     }
 
 }
+
+   /* public function uploadImage(UploadedFileInterface $uploadedFile, Response $response)
+{
+    $s3Client = self::getInstance()->getS3Client();
+
+    // AWS S3 업로드 로직
+    $s3Bucket = 'photo-bucket-test1';
+    $s3Folder = 'photo_test/';
+    $s3Key = $s3Folder . $uploadedFile->getClientFilename();
+
+
+try {
+    $result = $s3Client->putObject([
+        'Bucket' => $s3Bucket,
+        'Key'    => $s3Key,
+        'Body'   => $uploadedFile->getStream(),
+    ]);
+
+    if ($result) {
+        // 이미지 업로드가 성공하면 DB에 메타데이터 저장
+        $dbHandler = new DBHandler();
+        $dbHandler->saveMetadata($uploadedFile->getClientFilename(), $s3Key);
+        $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            throw new \Exception("S3 upload failed");
+        }
+} catch (\Exception $e) {
+    // S3 업로드 실패 시 에러 응답
+    $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+    return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+}
+}*/
 ?>

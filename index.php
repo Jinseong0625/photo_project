@@ -284,7 +284,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });*/
 
 // 이미지 다운로드 API
-$app->get('/download/{filename}', function (Request $request, Response $response, array $args) {
+/*$app->get('/download/{filename}', function (Request $request, Response $response, array $args) {
     $filename = $args['filename'];
 
     if (!$filename) {
@@ -321,6 +321,48 @@ $app->get('/download/{filename}', function (Request $request, Response $response
     // 파일 상태를 업데이트
     $dbHandler = new DBHandler();
     $dbHandler->updateFileStatus($filename);
+
+    return $response;
+}); */
+
+$app->get('/download', function (Request $request, Response $response, array $args) {
+    // 수정된 부분: 편집이 필요한 파일 가져오기
+    $dbHandler = new DBHandler();
+    $pendingFile = $dbHandler->getPendingFile();
+
+    if (!$pendingFile) {
+        // 편집이 필요한 파일이 없음
+        $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    }
+
+    // 수정된 부분: 편집이 필요한 파일의 S3 키 가져오기
+    $imageKey = $pendingFile['s3_key'];
+
+    // S3에서 가져온 이미지를 클라이언트로 전송
+    $s3Handler = S3Handler::getInstance(); // S3Handler 인스턴스를 가져오기
+    $imageDataFromS3 = $s3Handler->getImageData($imageKey);
+
+    if (!$imageDataFromS3) {
+        // 이미지 정보를 찾을 수 없음
+        $response->getBody()->write(json_encode(['error' => 'Image not found.']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    }
+
+    // 파일의 MIME 타입 확인
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_buffer($finfo, $imageDataFromS3);
+    finfo_close($finfo);
+
+    // 파일 다운로드 헤더 설정
+    $response = $response->withHeader('Content-Type', $mimeType);
+    $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($imageKey) . '"');
+
+    // S3에서 가져온 이미지를 클라이언트로 전송
+    $response->getBody()->write($imageDataFromS3);
+
+    // 파일 상태를 업데이트
+    $dbHandler->updateFileStatus($imageKey);
 
     return $response;
 });

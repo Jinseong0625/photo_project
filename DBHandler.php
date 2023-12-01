@@ -446,5 +446,19 @@ class DBHandler extends DBConnector{
             echo 'Database error: ' . $e->getMessage();
         }
     }
+
+    public function getPendingFile()
+    {
+        try {
+            // 수정: status가 0인 파일 중 ud_idx가 가장 낮은 파일 가져오기
+            $stmt = $this->db->prepare('SELECT * FROM UploadData WHERE status = 0 ORDER BY ud_idx LIMIT 1');
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+            return null;
+        }
+    }
 }
     ?>
