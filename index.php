@@ -333,8 +333,10 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     $dbHandler = new DBHandler();
     $pendingFile = $dbHandler->getPendingFile();
 
-    if (!$pendingFile) {
-        // 편집이 필요한 파일이 없음
+    error_log("PendingFile: " . json_encode($pendingFile));
+
+    if (!$pendingFile || !isset($pendingFile['s3_key'])) {
+        // 편집이 필요한 파일이 없거나 s3_key가 없는 경우
         $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
         return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
     }
