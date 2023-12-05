@@ -185,7 +185,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
         $imageHandler = new \DBManager\S3Handler();
         
         try {
-            $result = $imageHandler->uploadImage($uploadedFiles['image'], $response, $_SERVER['REMOTE_ADDR']);
+            $result = $imageHandler->uploadImage($uploadedFiles['image'], $_SERVER['REMOTE_ADDR']);
 
             if ($result['success']) {
                 // 이미지 업로드 및 메타데이터 저장이 성공하면 응답

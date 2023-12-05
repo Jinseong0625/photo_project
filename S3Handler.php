@@ -31,7 +31,7 @@ class S3Handler extends S3Connector
 
 
 
-public function uploadImage(UploadedFileInterface $uploadedFile, Response $response,$ipAddress)
+public function uploadImage(UploadedFileInterface $uploadedFile ,$ipAddress)
 {
     $s3Client = self::getInstance()->getS3Client();
 
@@ -66,8 +66,9 @@ public function uploadImage(UploadedFileInterface $uploadedFile, Response $respo
             $dbHandler->updateTotalLog($ipIdx, 1, 1, 1, 1);
 
         // 직접 JSON 응답 작성
-        $response->getBody()->write(json_encode(['success' => true]));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        return ['success' => true];
+        #$response->getBody()->write(json_encode(['success' => true]));
+        #return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     } else {
         throw new \Exception("S3 upload failed");
     }
