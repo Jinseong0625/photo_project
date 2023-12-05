@@ -355,7 +355,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         }
 
         // $filename['filename'] 값이 예상대로 들어왔는지 로그로 확인
-        error_log("Filename: " . $filename['filename']);
+        error_log("Filename in /download handler: " . print_r($filename, true));
 
         $s3Handler = S3Handler::getInstance();
         $s3Bucket = 'photo-bucket-test1';
