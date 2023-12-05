@@ -328,11 +328,11 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 // 호출시 편집이 필요한 파일이 존재할 경우 DB에서 키값이 낮은 순서대로 사진 데이터를
 // 다운로드 받게 하는 api 누끼따는 서버에서 이걸 편집이 끝났을때 이걸 호출하면
 // 편집이 필요한 사진 파일을 바로 받을 수 있는거임
-$app->get('/download', function (Request $request, Response $response, array $args) {
+$app->get('/download', function (Request $request, Response $response, array $args) use($api) {
     try {
         // 수정된 부분: status가 0이면서 가장 낮은 ud_idx의 filename 가져오기
-        $dbHandler = new DBHandler();
-        $filename = $dbHandler->getPendingFile();
+        #$dbHandler = new DBHandler();
+        $filename = $api->getPendingFile();
 
         /*if (!$filename) {
             // 편집이 필요한 파일이 없음
@@ -347,9 +347,6 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $imageKey = "photo_test/" . $filename['filename'];
         error_log("Image Key: " . $imageKey);
         $imageDataFromS3 = $s3Handler->getImageData($imageKey);*/
-
-        // $filename['filename'] 값이 예상대로 들어왔는지 로그로 확인
-        error_log("Filename in /download handler: " . print_r($filename, true));
 
         if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
             // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
@@ -383,7 +380,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $response->getBody()->write($imageDataFromS3);
 
         // 파일 상태를 업데이트
-        $dbHandler->updateFileStatus($filename);
+        $api->updateFileStatus($filename);
 
         return $response;
     } catch (\Exception $e) {
@@ -392,9 +389,6 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
     }
 });
-
-
-
 
 $app->run();
 
