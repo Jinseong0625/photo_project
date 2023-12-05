@@ -353,6 +353,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
         if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
             // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
+            error_log("No pending file for editing. Filename: " . print_r($filename, true));
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }        
