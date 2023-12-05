@@ -318,7 +318,7 @@ class DBHandler extends DBConnector{
             // IP address already exists, return the ip_idx
             $row = $result->fetch_assoc();
             $ipIdx = $row['ip_idx'];
-            echo "IP address already exists. ip_idx: $ipIdx\n";
+            #echo "IP address already exists. ip_idx: $ipIdx\n";
             return $ipIdx;
         }
 
@@ -329,7 +329,7 @@ class DBHandler extends DBConnector{
 
         // Return the last inserted id (ip_idx)
         $ipIdx = $stmt->insert_id;
-        echo "IP address inserted. ip_idx: $ipIdx\n";
+        #echo "IP address inserted. ip_idx: $ipIdx\n";
         return $ipIdx;
     } catch (\PDOException $e) {
         // Handle the exception as needed, e.g., log the error.
