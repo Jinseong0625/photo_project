@@ -461,7 +461,7 @@ class DBHandler extends DBConnector{
             $result = $res->fetch_assoc();
 
             // 추가: 결과값 로그로 확인
-            error_log("getPendingFile Result: " . print_r($result, true));
+            #error_log("getPendingFile Result: " . print_r($result, true));
 
             return $result;
         } catch (\PDOException $e) {
