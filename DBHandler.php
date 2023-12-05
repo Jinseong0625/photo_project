@@ -453,14 +453,14 @@ class DBHandler extends DBConnector{
             // 수정: status가 0인 파일 중 ud_idx가 가장 낮은 파일 가져오기
             $stmt = $this->db->prepare('SELECT filename FROM UploadData WHERE status = 0 ORDER BY iptdate ASC LIMIT 1');
             $stmt->execute();
-            #return $stmt->fetch();
-            $res = $stmt->get_result();
+            return $stmt->fetch();
+            #$res = $stmt->get_result();
             #$data = array();
             
-            $result = $res->fetch_assoc();
+            #$result = $res->fetch_assoc();
 
             // 추가: 결과값 로그로 확인
-            error_log("getPendingFile Result: " . print_r($result, true));
+            #error_log("getPendingFile Result: " . print_r($result, true));
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
