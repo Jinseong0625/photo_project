@@ -461,6 +461,8 @@ class DBHandler extends DBConnector{
 
             // 추가: 결과값 로그로 확인
             error_log("getPendingFile Result: " . print_r($result, true));
+
+            return $result;
         } catch (\PDOException $e) {
             // Handle the exception as needed, e.g., log the error.
             echo 'Database error: ' . $e->getMessage();
