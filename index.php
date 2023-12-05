@@ -188,13 +188,17 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 
         if ($result['success']) {
             // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
-            return $response->withStatus(200)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+            $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         } else {
             // 실패 시 에러 응답
-            return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+            $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     } else {
-        return $response->withStatus(400)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
+        // 클라이언트 오류 응답: 필수 파일 누락
+        $response->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }
 });
 
