@@ -377,7 +377,7 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
         // 파일 다운로드 헤더 설정
         $response = $response->withHeader('Content-Type', $mimeType);
-        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($filename) . '"');
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($filename['filename']) . '"');
 
         // S3에서 가져온 이미지를 클라이언트로 전송
         $response->getBody()->write($imageDataFromS3);
