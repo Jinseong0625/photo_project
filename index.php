@@ -348,14 +348,14 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         error_log("Image Key: " . $imageKey);
         $imageDataFromS3 = $s3Handler->getImageData($imageKey);*/
 
+        // $filename['filename'] 값이 예상대로 들어왔는지 로그로 확인
+        error_log("Filename in /download handler: " . print_r($filename, true));
+
         if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
             // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-        }
-
-        // $filename['filename'] 값이 예상대로 들어왔는지 로그로 확인
-        error_log("Filename in /download handler: " . print_r($filename, true));
+        }        
 
         $s3Handler = S3Handler::getInstance();
         $s3Bucket = 'photo-bucket-test1';
