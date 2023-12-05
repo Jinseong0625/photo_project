@@ -455,7 +455,10 @@ class DBHandler extends DBConnector{
             $stmt->execute();
             #return $stmt->fetch();
 
-            $result = $stmt->fetch();
+            $res = $stmt->get_result();
+            #$data = array();
+
+            $result = $res->fetch_assoc();
 
             // 추가: 결과값 로그로 확인
             error_log("getPendingFile Result: " . print_r($result, true));
