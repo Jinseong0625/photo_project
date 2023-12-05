@@ -184,7 +184,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     if (isset($uploadedFiles['image'])) {
         $imageHandler = new \DBManager\S3Handler();
         $result = $imageHandler->uploadImage($uploadedFiles['image'], $response , $_SERVER['REMOTE_ADDR']);
-        return $result;
+        #return $result;
 
         if ($result['success']) {
             // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
@@ -196,6 +196,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     } else {
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
     }
+    return $response;
 });
 
 // 이미지 다운로드 API
