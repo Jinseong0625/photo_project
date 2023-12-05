@@ -331,7 +331,6 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 $app->get('/download', function (Request $request, Response $response, array $args) {
     try {
         // 수정된 부분: status가 0이면서 가장 낮은 ud_idx의 filename 가져오기
-        $response = new Response();
         $dbHandler = new DBHandler();
         $filename = $dbHandler->getPendingFile();
 
@@ -379,8 +378,6 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         // 파일 다운로드 헤더 설정
         $response = $response->withHeader('Content-Type', $mimeType);
         $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($filename) . '"');
-
-        $response = $response->withHeader('Content-Length', strlen($imageDataFromS3));
 
         // S3에서 가져온 이미지를 클라이언트로 전송
         $response->getBody()->write($imageDataFromS3);
