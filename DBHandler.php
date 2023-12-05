@@ -366,16 +366,38 @@ class DBHandler extends DBConnector{
     }
 
     public function updateTotalLog($ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement)
-{
-    try {
-        $stmt = $this->db->prepare('INSERT INTO TotalLog (ipidx, day_total, week_total, month_total, year_total) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE day_total = day_total + ?, week_total = week_total + ?, month_total = month_total + ?, year_total = year_total + ?');
-        $stmt->bind_param("iiiiiiiii", $ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement);
-        $stmt->execute();
-    } catch (\PDOException $e) {
-        // Handle the exception as needed, e.g., log the error.
-        echo 'Database error: ' . $e->getMessage();
+    {
+        try {
+            // 먼저 해당 IP 주소에 대한 기존 데이터가 있는지 확인
+            $existingData = $this->getTotalLogByIp($ipIdx);
+    
+            if ($existingData) {
+                // 기존 데이터가 있으면 업데이트
+                $stmt = $this->db->prepare('UPDATE TotalLog SET day_total = day_total + ?, week_total = week_total + ?, month_total = month_total + ?, year_total = year_total + ? WHERE ipidx = ?');
+                $stmt->bind_param("iiiii", $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement, $ipIdx);
+            } else {
+                // 기존 데이터가 없으면 새로 추가
+                $stmt = $this->db->prepare('INSERT INTO TotalLog (ipidx, day_total, week_total, month_total, year_total) VALUES (?, ?, ?, ?, ?)');
+                $stmt->bind_param("iiiii", $ipIdx, $dayIncrement, $weekIncrement, $monthIncrement, $yearIncrement);
+            }
+    
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+        }
     }
-}
+    
+    // 특정 IP 주소에 대한 TotalLog 데이터 가져오기
+    public function getTotalLogByIp($ipIdx)
+    {
+        $stmt = $this->db->prepare('SELECT * FROM TotalLog WHERE ipidx = ?');
+        $stmt->bind_param("i", $ipIdx);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        return $result->fetch_assoc();
+    }
 
     public function getUploadData($udIdx) {
         try {
