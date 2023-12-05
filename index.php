@@ -196,7 +196,6 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     } else {
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
     }
-    return $response;
 });
 
 // 이미지 다운로드 API
