@@ -380,7 +380,12 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $response->getBody()->write($imageDataFromS3);
 
         // 파일 상태를 업데이트
-        $api->updateFileStatus($filename);
+        try {
+            $api->updateFileStatus($filename['filename']);
+        } catch (\PDOException $e) {
+            // Handle the exception, log the error, or perform other actions as needed.
+            error_log('Error updating file status: ' . $e->getMessage());
+        }
 
         return $response;
     } catch (\Exception $e) {
