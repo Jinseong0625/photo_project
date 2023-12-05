@@ -334,8 +334,6 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         #$dbHandler = new DBHandler();
         $filename = $api->getPendingFile();
 
-        error_log("Value of \$filename: " . print_r($filename, true));
-
         /*if (!$filename) {
             // 편집이 필요한 파일이 없음
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
@@ -351,9 +349,6 @@ $app->get('/download', function (Request $request, Response $response, array $ar
         $imageDataFromS3 = $s3Handler->getImageData($imageKey);*/
 
         if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
-
-            error_log("\$filename is array: " . is_array($filename));
-            error_log("isset(\$filename['filename']): " . isset($filename['filename']));
             // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
             error_log("No pending file for editing. Filename: " . print_r($filename, true));
             $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
