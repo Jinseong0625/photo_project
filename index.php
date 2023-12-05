@@ -183,16 +183,22 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     // Check if image file is uploaded
     if (isset($uploadedFiles['image'])) {
         $imageHandler = new \DBManager\S3Handler();
-        $result = $imageHandler->uploadImage($uploadedFiles['image'], $response , $_SERVER['REMOTE_ADDR']);
-        #return $result;
+        
+        try {
+            $result = $imageHandler->uploadImage($uploadedFiles['image'], $response, $_SERVER['REMOTE_ADDR']);
 
-        if ($result['success']) {
-            // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
-            $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
-            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-        } else {
-            // 실패 시 에러 응답
-            $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+            if ($result['success']) {
+                // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
+                $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+            } else {
+                // 실패 시 에러 응답
+                $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+                return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+            }
+        } catch (\Exception $e) {
+            // 예외 처리 시 에러 응답
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     } else {
