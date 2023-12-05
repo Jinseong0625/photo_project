@@ -451,13 +451,12 @@ class DBHandler extends DBConnector{
     {
         try {
             // 수정: status가 0인 파일 중 ud_idx가 가장 낮은 파일 가져오기
-            $stmt = $this->db->prepare('SELECT filename FROM UploadData WHERE status = 0 AND ud_idx = (SELECT MIN(ud_idx) FROM UploadData WHERE status = 0)');
+            $stmt = $this->db->prepare('SELECT filename FROM UploadData WHERE status = 0 ORDER BY iptdate ASC LIMIT 1');
             $stmt->execute();
             #return $stmt->fetch();
-
             $res = $stmt->get_result();
             #$data = array();
-
+            
             $result = $res->fetch_assoc();
 
             // 추가: 결과값 로그로 확인
