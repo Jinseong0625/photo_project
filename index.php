@@ -43,6 +43,12 @@ $app->get('/test', function ($request, $response, $args) use($api) {
 	return $response;
 });
 
+$app->get('/image', function ($request, $response, $args) use($api) {
+	$row = $api->sp_select_image();
+	$response->getBody()->write($row);
+	return $response;
+});
+
 $app->post('/ip', function ($request, $response, $args) use($api) 
 {
 	$params = $request->getParsedBody();
