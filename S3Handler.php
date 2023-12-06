@@ -74,6 +74,9 @@ public function uploadImage(UploadedFileInterface $uploadedFile ,$ipAddress)
     }
     } catch (\Exception $e) {
         // S3 업로드 실패 시 에러 응답
+        $errorMessage = 'Failed to upload image. ' . $e->getMessage();
+        $dbHandler = new DBHandler();
+        $dbHandler->logError('S3_UPLOAD_ERROR', $errorMessage, $ipAddress);
         return ['success' => false, 'error' => 'Failed to upload image.'];
     }
 }

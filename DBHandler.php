@@ -518,5 +518,22 @@ class DBHandler extends DBConnector{
             return null;
         }
     }
+    // 에러로그 남기는 메서드
+    public function logError($errorType, $errorMessage, $ipAddress)
+    {
+        try {
+            // 키오스크 ip 주소로 ip_idx를 가져오기
+            $ipIdx = $this->getIpIdxByIp($ipAddress);
+
+            // 오류 로그 저장
+            $stmt = $this->db->prepare('INSERT INTO ErrorLog (error_type, error_message, ip_idx, iptdate) VALUES (?, ?, ?, NOW())');
+            $stmt->bind_param("ssi", $errorType, $errorMessage, $ipIdx);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            // Handle the exception as needed, e.g., log the error.
+            echo 'Database error: ' . $e->getMessage();
+        }
+
+    }
 }
     ?>

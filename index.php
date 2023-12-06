@@ -299,7 +299,8 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     return $response;
 });*/
 
-// 이미지 다운로드 API
+// 이미지 다운로드 API - 단순하게 파일 이름으로 파일을 다운로드 받을 수 있는 api
+// 단점은 중복 처리가 제대로 이루어 지지 못함
 $app->get('/download/{filename}', function (Request $request, Response $response, array $args) {
     $filename = $args['filename'];
 
@@ -405,6 +406,8 @@ $app->get('/download', function (Request $request, Response $response, array $ar
 
         return $response;
     } catch (\Exception $e) {
+        $errorMessage = 'Error during image download. ' . $e->getMessage();
+        $api->logError('IMAGE_DOWNLOAD_ERROR', $errorMessage, $_SERVER['REMOTE_ADDR']);
         // Handle the exception as needed, e.g., log the error.
         echo 'Error: ' . $e->getMessage();
         return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
