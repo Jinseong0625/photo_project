@@ -301,7 +301,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 
 // 이미지 다운로드 API - 단순하게 파일 이름으로 파일을 다운로드 받을 수 있는 api
 // 단점은 중복 처리가 제대로 이루어 지지 못함
-$app->get('/download/{filename}', function (Request $request, Response $response, array $args) {
+$app->get('/download/{filename}', function (Request $request, Response $response, array $args) use($api) {
     $filename = $args['filename'];
 
     if (!$filename) {
@@ -336,8 +336,7 @@ $app->get('/download/{filename}', function (Request $request, Response $response
     $response->getBody()->write($imageDataFromS3);
 
     // 파일 상태를 업데이트
-    $dbHandler = new DBHandler();
-    $dbHandler->updateFileStatus($filename);
+    $api->updateFileStatus($filename);
 
     return $response;
 });
