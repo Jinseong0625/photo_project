@@ -33,6 +33,10 @@ class S3Handler extends S3Connector
 
 public function uploadImage(UploadedFileInterface $uploadedFile ,$ipAddress)
 {
+    if (!$this->isImage($uploadedFile)) {
+        throw new \Exception('Invalid image file.');
+    }
+
     $s3Client = self::getInstance()->getS3Client();
 
     // AWS S3 업로드 로직
@@ -100,6 +104,13 @@ public function getImageData($imageKey)
             return null;
         }
     }
+    // 유효성 검사
+    private function isImage(UploadedFileInterface $file): bool {
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif']; // 이미지로 허용할 MIME 타입을 추가하세요
+        $fileMimeType = $file->getClientMediaType();
+        return in_array($fileMimeType, $allowedMimeTypes);
+    }
+    
 
 }
 
