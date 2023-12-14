@@ -214,91 +214,6 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
     }
 });
 
-// 이미지 다운로드 API
-/*$app->get('/download/{fileName}', function (Request $request, Response $response, array $args) use ($container) {
-    $fileName = $args['fileName'];
-
-    // 컨테이너에서 DB 객체 가져오기
-    #$db = $request->getAttribute('db');
-	
-	$db = $container->get('DBHandler');
-	$s3Handler = $container->get('s3Handler');
-
-    // 트랜잭션 시작
-    $db->beginTransaction();
-
-    try {
-        $result = $s3Handler->downloadImage($fileName);
-
-        if ($result['error'] === null) {
-            // 이미지 다운로드 성공
-            $response->getBody()->write($result['data']);
-
-            // 파일 다운로드 성공 시 상태 업데이트
-            $db->updateFileStatus($fileName, 1);
-
-            // 트랜잭션 커밋
-            $db->commit();
-
-            return $response->withHeader('Content-Type', 'image/jpeg');
-        } else {
-            // 이미지 다운로드 실패
-            $db->rollBack();
-
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Image not found.']));
-        }
-    } catch (\Exception $e) {
-        // 예외 발생 시 롤백
-        $db->rollBack();
-
-        return $response->withStatus(500)->withHeader('Content-Type', 'application/json')->getBody()->write(json_encode(['error' => 'Internal server error.']));
-    }
-});*/
-
-// 이미지 다운로드 API
-/*$app->get('/download', function (Request $request, Response $response, array $args) {
-    #$imageKey = $request->getQueryParams()['imageKey'] ?? null;
-    $path = $request->getUri()->getPath();
-
-    // path에서 imageKey 값을 추출
-    $parts = explode('/', $path);
-    $imageKey = end($parts);
-
-    var_dump($request->getQueryParams());
-
-    if (!$imageKey) {
-        // 필수 파라미터가 누락됨
-        $response->getBody()->write(json_encode(['error' => 'Missing imageKey parameter.','imageKey' => $imageKey]));
-        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
-    }
-
-    $s3Handler = S3Handler::getInstance();
-    $s3Client = $s3Handler->getS3Client();
-    $s3Bucket = 'photo-bucket-test1';
-
-    // 수정된 부분: S3 스토리지에서 직접 이미지 데이터 가져오기
-    $imageDataFromS3 = $s3Handler->getImageData($imageKey);
-
-    if (!$imageDataFromS3) {
-        // 이미지 정보를 찾을 수 없음
-        $response->getBody()->write(json_encode(['error' => 'Image not found.']));
-        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-    }
-
-    // 파일의 MIME 타입 확인
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_buffer($finfo, $imageDataFromS3);
-    finfo_close($finfo);
-
-    // 파일 다운로드 헤더 설정
-    $response = $response->withHeader('Content-Type', $mimeType);
-    $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . $imageKey . '"');
-
-    // S3에서 가져온 이미지를 클라이언트로 전송
-    $response->getBody()->write($imageDataFromS3);
-    return $response;
-});*/
-
 // 이미지 다운로드 API - 단순하게 파일 이름으로 파일을 다운로드 받을 수 있는 api
 // 단점은 중복 처리가 제대로 이루어 지지 못함
 $app->get('/download/{filename}', function (Request $request, Response $response, array $args) use($api) {
@@ -347,22 +262,7 @@ $app->get('/download/{filename}', function (Request $request, Response $response
 $app->get('/download', function (Request $request, Response $response, array $args) use($api) {
     try {
         // 수정된 부분: status가 0이면서 가장 낮은 ud_idx의 filename 가져오기
-        #$dbHandler = new DBHandler();
         $filename = $api->getPendingFile();
-
-        /*if (!$filename) {
-            // 편집이 필요한 파일이 없음
-            $response->getBody()->write(json_encode(['error' => 'No pending file for editing.']));
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-        }
-
-        $s3Handler = S3Handler::getInstance();
-        $s3Bucket = 'photo-bucket-test1';
-
-        // S3에서 가져온 이미지를 클라이언트로 전송
-        $imageKey = "photo_test/" . $filename['filename'];
-        error_log("Image Key: " . $imageKey);
-        $imageDataFromS3 = $s3Handler->getImageData($imageKey);*/
 
         if (!$filename || !is_array($filename) || !isset($filename['filename'])) {
             // 편집이 필요한 파일이 없음 또는 $filename이 유효하지 않음
