@@ -12,8 +12,8 @@ class S3Connector {
 
     private function initializeS3() {
         // 환경 변수에서 AWS 액세스 키 및 시크릿 키 가져오기
-        $awsAccessKey = getenv('AWS_ACCESS_KEY');
-        $awsSecretKey = getenv('AWS_SECRET_KEY');
+        $awsAccessKey = $_SERVER['AWS_ACCESS_KEY'];
+        $awsSecretKey = $_SERVER['AWS_SECRET_KEY'];
         // AWS SDK를 사용하여 S3 클라이언트 초기화
         $s3 = new S3Client([
             'version'     => 'latest',
