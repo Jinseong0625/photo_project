@@ -9,4 +9,5 @@ define("_PORT_", "3306");
 
 define("SFTP_NAME", "ubuntu");
 
+define("_PROJECT_ID_", "helical-patrol-412705");
 ?>
