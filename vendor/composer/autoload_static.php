@@ -45,6 +45,11 @@ class ComposerStaticInitb1d3a4b31a794fd661da2491e880e2d6
         array (
             'phpseclib3\\' => 11,
         ),
+        'c' => 
+        array (
+            'chillerlan\\Settings\\' => 20,
+            'chillerlan\\QRCode\\' => 18,
+        ),
         'T' => 
         array (
             'Tuupola\\Middleware\\' => 19,
@@ -133,6 +138,14 @@ class ComposerStaticInitb1d3a4b31a794fd661da2491e880e2d6
         'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        ),
+        'chillerlan\\Settings\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-settings-container/src',
+        ),
+        'chillerlan\\QRCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-qrcode/src',
         ),
         'Tuupola\\Middleware\\' => 
         array (
