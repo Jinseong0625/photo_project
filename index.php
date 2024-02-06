@@ -314,6 +314,19 @@ $app->get('/download', function (Request $request, Response $response, array $ar
     }
 });
 
+// 가게 메뉴 정보를 가져오는 엔드포인트
+$app->get('/menu/{storeId}', function (Request $request, Response $response, array $args) use ($api) {
+    $storeId = $args['storeId'];
+
+    // 가게 메뉴 정보 가져오기
+    $menuInfo = $api->getMenuInfo($storeId);
+
+    // JSON 형식으로 응답
+    $response->getBody()->write(json_encode($menuInfo));
+
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->run();
 
 ?>

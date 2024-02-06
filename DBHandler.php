@@ -504,5 +504,28 @@ class DBHandler extends DBConnector{
         }
 
     }
+
+    // 가게 메뉴 정보 가져오기
+    public function getMenuInfo($storeId)
+    {
+        // 데이터베이스 쿼리를 사용하여 가게 메뉴 정보를 가져오는 로직을 구현
+        // 이 예시에서는 가짜 데이터를 반환합니다.
+        $menuInfo = [
+            [
+                'id' => 1,
+                'name' => '메뉴1',
+                'price' => 10000,
+            ],
+            [
+                'id' => 2,
+                'name' => '메뉴2',
+                'price' => 12000,
+            ],
+            // 실제 데이터베이스 조회 로직을 여기에 추가
+        ];
+
+        return $menuInfo;
+    }
+    
 }
     ?>
