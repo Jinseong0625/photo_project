@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "helical-patrol-412705",
+  "private_key_id": "dc7fd6ee32f2f05ba242229006dcd5a0e9b04404",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDWEH3LAQnANgnp\nZzki6GbDhBosormDpZU589LA5k+Z6E+ElqknMeDWMS6n9qJTYuFDxtQxRwK869Mx\nv8oeArDR1nhhobJwkEPQ4/mWQXdbel5IhXiXanWULv/W5/tNR0+AG4czCV5F8Jjc\nRLaF6iVhyJVtjOroNoP0ZimxK0Uuo34uBvG4lw2hMBP1Dq2GM6SGy3wo5EJQ/kRl\nXvjVEQTso/79rPgvK/k54zlBAUW3JWjk0VLSyz0tkYuVHZUCIKAJcNe754oBD6L/\nOcKdi9puzA+jnNa1z2DHFl+kJF7QWXipkUUCp9sgNskZsm5NZMDdIfGjGgl0Stq5\n9FuyowTtAgMBAAECggEAHnvTOhdAAPoBD9amBZFUXwffJVeX9QYduda9vsAdelSh\njEdbN8xr0PzIgN1HsPm+DAWSvqC25Fnt5aIDAaKO9RbmZjrdWxfEPIlWh93zRhjn\nN8sgCOn9a/iEcOFwwUjEKsFgz7UIEowobIexeWEGaUYj92mPozluMZ3h1ovLqpAV\nkYNG2CXaKmYLZ0BiB2jkdRmGFDAhkzvSivGA2LX4KvIupkjc4MaElEj1J/kNsD9E\nHQSGtk76a45oXXE7hiGksVxwkgxR+V3yEb4XibwreoMvRfzmXPMV6mSgTzNg1251\n459XP6q1tlOrd3Pmx1WT04Ox4/4KZ6MYbHilvWxbYQKBgQDrgKekRaqHHhYwAeLC\nwk6clonfQglMDKKEhS/4w+B2Mnztk/IJZ0kwKJJ9rvnem9PtiYUmSK34+nxyXHWR\nm84Sk/sw9Ymuy/oJeCgrp2MuFQBsYlZVnzu/6c/B//ANKJd62hKSmwRybLoKOwaN\nVN3RTYvQnMlkCci5bL6p+9QqDQKBgQDosinBdCOhknMQmunieSY3Q0gMGS1h/U2U\nv34GnDmiKC+7vgXsNJaNxM3u2K096XHFaR5b7gtjqT/86ReSu8im0Wi70jLtYbOy\nJ6QkWw/1pXbbSJEuMO6Ftz/cxSZc1p75iTZTW9LoaJ6baa2Q9sMEddJsYl24Ma37\nir9lMgPuYQKBgQCCi7HiXP/3oJT6DcGO5rk/Ei/hQ7D1qDdasJ30D1jZDIm2BQHx\ndoDaolL6OsmmPclP7qCRpU5TKz9bAafmjHDCWaev7xxgeg/juejCsipHfDrc2fIz\nym4Lp2eUifSexraZ0lLjU+02JNFIJIowRDAl+w+bF56Hxuiu6PoULlXg7QKBgQDm\n8DsEpdDe/8t2xWgtvfKxkfKlHy+tOomOgOYAhXeleaC2AQc7v41Tseh3jU+STGb/\ndy4MKpnfFRBOXr9ofznKZbY+AYVNllOTEkiTVFTohIkLZF/BqgpvZsjYwEkshkxM\nd2MVI+KTiZEvyJfbcStm99AYhR9iONvk83S0aAkCwQKBgQCiR90HkDW6OgGHl56h\nSm5KF+KsuX08OPyPOwYt2dcPiQqhO0VJlPjBY3udbVavoUAK1xAUTHnGOiU0SrYr\n3iFttyWjAiOD3KVYBcqbg5wT0XygzCnYbrfnPVPyuWiS0S7Rw/upoQqqrN/eRFos\nLF+gQjNgOFpYoupvR0PnM9DWeA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "project-key-file@helical-patrol-412705.iam.gserviceaccount.com",
+  "client_id": "110887265985389023088",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/project-key-file%40helical-patrol-412705.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

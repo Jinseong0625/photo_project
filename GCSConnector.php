@@ -25,4 +25,13 @@ class GCSConnector {
     }
 }
 
+$keyFilePath = _KEYFILEPATH_;
+$projectId = _PROJECT_ID_;
+
+// GCSConnector 인스턴스 생성
+$gcsConnector = new GCSConnector($projectId, $keyFilePath);
+
+// StorageClient 가져오기
+$storageClient = $gcsConnector->getStorageClient();
+
 ?>

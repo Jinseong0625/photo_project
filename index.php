@@ -3,6 +3,8 @@ require __DIR__ . '/global_var.php';
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ .'/DBHandler.php';
 require __DIR__ . '/S3Handler.php';
+require __DIR__ . '/GCSConnector.php';
+require __DIR__ . '/GCSHandler.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -325,6 +327,85 @@ $app->get('/menu/{storeId}', function (Request $request, Response $response, arr
     $response->getBody()->write(json_encode($menuInfo));
 
     return $response->withHeader('Content-Type', 'application/json');
+});
+
+// 업로드 API 엔드포인트
+$app->post('/upload', function (Request $request, Response $response, array $args) {
+    $ipAddress = $request->getHeader('X-Forwarded-For')[0] ?? $_SERVER['REMOTE_ADDR'];
+    $uploadedFiles = $request->getUploadedFiles();
+
+    // Check if image file is uploaded
+    if (isset($uploadedFiles['image'])) {
+        $gcsHandler = new GCSHandler(_PROJECT_ID_, _KEYFILEPATH_);
+        
+        try {
+            $result = $gcsHandler->uploadImage($uploadedFiles['image'], $ipAddress, 'your-bucket-name'); 
+
+            if ($result['success']) {
+                // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
+                $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.']));
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+            } else {
+                // 실패 시 에러 응답
+                $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+                return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+            }
+        } catch (\Exception $e) {
+            // 예외 처리 시 에러 응답
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+        }
+    } else {
+        // 클라이언트 오류 응답: 필수 파일 누락
+        $response->getBody()->write(json_encode(['error' => 'No image file uploaded.']));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+});
+
+// 다운로드 API 엔드포인트
+$app->get('/download/{gcsKey}', function (Request $request, Response $response, array $args) {
+    try {
+        $gcsKey = $args['gcsKey'];
+        $bucketName = 'your-bucket-name'; // 실제 버킷 이름으로 변경
+
+        $gcsHandler = new GCSHandler(_PROJECT_ID_, _KEYFILEPATH_);
+
+        // 구글 클라우드 스토리지에서 이미지를 가져오기
+        $imageDataFromGCS = $gcsHandler->getImageData($gcsKey, $bucketName);
+
+        if (!$imageDataFromGCS) {
+            // 이미지 정보를 찾을 수 없음
+            $response->getBody()->write(json_encode(['error' => 'Image not found.']));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
+        // 파일의 MIME 타입 확인
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_buffer($finfo, $imageDataFromGCS);
+        finfo_close($finfo);
+
+        // 파일 다운로드 헤더 설정
+        $response = $response->withHeader('Content-Type', $mimeType);
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="' . basename($gcsKey) . '"');
+
+        // 구글 클라우드 스토리지에서 가져온 이미지를 클라이언트로 전송
+        $response->getBody()->write($imageDataFromGCS);
+
+        // 파일 상태를 업데이트
+        // (필요에 따라 GCSHandler에서 메서드를 추가하고 이 부분을 수정하세요)
+        // try {
+        //     $gcsHandler->updateFileStatus($gcsKey);
+        // } catch (\PDOException $e) {
+        //     // Handle the exception, log the error, or perform other actions as needed.
+        //     error_log('Error updating file status: ' . $e->getMessage());
+        // }
+
+        return $response;
+    } catch (\Exception $e) {
+        $errorMessage = 'Error during image download. ' . $e->getMessage();
+        // (필요에 따라 로그 또는 에러 핸들링 코드 추가)
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+    }
 });
 
 $app->run();
