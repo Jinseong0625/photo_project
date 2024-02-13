@@ -339,7 +339,7 @@ $app->post('/gcsupload', function (Request $request, Response $response, array $
         $gcsHandler = new GCSHandler(_PROJECT_ID_, _KEYFILEPATH_);
         
         try {
-            $result = $gcsHandler->uploadImage($uploadedFiles['image'], $ipAddress, 'your-bucket-name'); 
+            $result = $gcsHandler->uploadImage($uploadedFiles['image'], $ipAddress, BUCKET_NAME, FOLDER_PATH); 
 
             if ($result['success']) {
                 // 이미지 업로드 및 메타데이터 저장이 성공하면 응답

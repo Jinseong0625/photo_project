@@ -12,4 +12,6 @@ define("SFTP_NAME", "ubuntu");
 define("_PROJECT_ID_", "helical-patrol-412705");
 
 define("_KEYFILEPATH_", "/var/www/html/photo_project/pathfile/GCPStorage.json");
+define("BUCKET_NAME", "photo_test1");
+define("FOLDER_PATH", "photo_test");
 ?>
