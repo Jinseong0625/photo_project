@@ -330,7 +330,7 @@ $app->get('/menu/{storeId}', function (Request $request, Response $response, arr
 });
 
 // 업로드 API 엔드포인트
-$app->post('/upload', function (Request $request, Response $response, array $args) {
+$app->post('/gcsupload', function (Request $request, Response $response, array $args) {
     $ipAddress = $request->getHeader('X-Forwarded-For')[0] ?? $_SERVER['REMOTE_ADDR'];
     $uploadedFiles = $request->getUploadedFiles();
 
@@ -363,7 +363,7 @@ $app->post('/upload', function (Request $request, Response $response, array $arg
 });
 
 // 다운로드 API 엔드포인트
-$app->get('/download/{gcsKey}', function (Request $request, Response $response, array $args) {
+$app->get('/gcsdownload/{gcsKey}', function (Request $request, Response $response, array $args) {
     try {
         $gcsKey = $args['gcsKey'];
         $bucketName = 'your-bucket-name'; // 실제 버킷 이름으로 변경
