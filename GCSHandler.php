@@ -26,21 +26,13 @@ class GCSHandler extends GCSConnector {
         // 업로드할 파일의 키 생성
         $gcsKey = 'photo_test/' . $uploadedFile->getClientFilename();
 
-        // StorageObject 생성
-        $object = $bucket->upload(
-            $uploadedFile->getStream(),
-            [
-                'name' => $gcsKey,
-            ]
-        );
-
         try {
 
             error_log('Debug: IP Address - ' . $ipAddress);
             error_log('Debug: GCS Key - ' . $gcsKey);
 
 
-            $bucket->upload(
+            $object = $bucket->upload(
                 $uploadedFile->getStream(),
                 [
                     'name' => $gcsKey,
@@ -57,7 +49,7 @@ class GCSHandler extends GCSConnector {
             $object->update(['metadata' => $metadata]);
 
             // ... (이하 코드는 이전 코드와 동일하게 유지)
-
+            return ['success' => true];
         } catch (GoogleException $e) {
 
             error_log('Error: ' . $e->getMessage());
