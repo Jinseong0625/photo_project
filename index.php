@@ -347,12 +347,16 @@ $app->post('/gcsupload', function (Request $request, Response $response, array $
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             } else {
                 // 실패 시 에러 응답
-                $response->getBody()->write(json_encode(['error' => 'Failed to upload image.']));
+                $errorMessage = 'Failed to upload image. ' . $result['error'];
+                error_log($errorMessage);  // 로그에 출력
+                $response->getBody()->write(json_encode(['error' => $errorMessage]));
                 return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
             }
         } catch (\Exception $e) {
             // 예외 처리 시 에러 응답
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            $errorMessage = 'Error during image upload. ' . $e->getMessage();
+            error_log($errorMessage);  // 로그에 출력
+            $response->getBody()->write(json_encode(['error' => $errorMessage]));
             return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     } else {
