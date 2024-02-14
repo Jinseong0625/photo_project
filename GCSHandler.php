@@ -24,7 +24,7 @@ class GCSHandler extends GCSConnector {
         $bucket = $storage->bucket($bucketName);
 
         // 업로드할 파일의 키 생성
-        $gcsKey = 'your-prefix/' . uniqid() . '/' . $uploadedFile->getClientFilename();
+        $gcsKey = 'photo_test/' . uniqid() . '/' . $uploadedFile->getClientFilename();
 
         // StorageObject 생성
         $object = $bucket->upload(
