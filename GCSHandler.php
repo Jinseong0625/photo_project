@@ -35,6 +35,11 @@ class GCSHandler extends GCSConnector {
         );
 
         try {
+
+            error_log('Debug: IP Address - ' . $ipAddress);
+            error_log('Debug: GCS Key - ' . $gcsKey);
+
+
             $bucket->upload(
                 $uploadedFile->getStream(),
                 [
@@ -54,6 +59,8 @@ class GCSHandler extends GCSConnector {
             // ... (이하 코드는 이전 코드와 동일하게 유지)
 
         } catch (GoogleException $e) {
+
+            error_log('Error: ' . $e->getMessage());
             // Google Cloud Storage 업로드 실패 시 에러 응답
             $errorMessage = 'Failed to upload image. ' . $e->getMessage();
             $dbHandler = new DBHandler();
