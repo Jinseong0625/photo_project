@@ -342,6 +342,7 @@ $app->post('/gcsupload', function (Request $request, Response $response, array $
             $result = $gcsHandler->uploadImage($uploadedFiles['image'], $ipAddress, BUCKET_NAME, FOLDER_PATH); 
 
             if ($result['success']) {
+                $gcsHandler->sendDownloadSignal($result['gcsKey'], 'edit-client');
                 // 이미지 업로드 및 메타데이터 저장이 성공하면 응답
                 $response->getBody()->write(json_encode(['message' => 'Image uploaded successfully.','gcsKey' => $result['gcsKey']]));
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');

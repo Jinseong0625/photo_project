@@ -71,7 +71,6 @@ class GCSHandler extends GCSConnector {
         try {
             $imageDataFromStorage = $object->downloadAsString();
 
-            // 추가된 코드: 이미지 데이터를 가져온 후의 작업
             // 예시: 가져온 데이터를 가공하거나 로그를 남기는 등의 작업 수행
 
             return $imageDataFromStorage;
@@ -80,6 +79,41 @@ class GCSHandler extends GCSConnector {
             echo 'Error fetching image from Google Cloud Storage: ' . $e->getMessage();
             return null;
         }
+    }
+
+    public function sendDownloadSignal($gcsKey, $target){
+    
+        $endpointUrl = '34.64.137.179';
+
+        // cURL 핸들 초기화
+        $ch = curl_init();
+
+        $data = [
+            'gcskey' => $gcsKey,
+            'target' => $target,
+        ];
+
+         // cURL 옵션 설정
+        curl_setopt($ch, CURLOPT_URL, $endpointUrl);  // URL 설정
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded',
+        ]);
+
+        // cURL 실행 및 응답 획득
+    $response = curl_exec($ch);
+
+    // cURL 에러 핸들링
+    if (curl_errno($ch)) {
+        error_log('cURL error: ' . curl_error($ch));
+        // 에러 핸들링 로직을 추가하거나 예외를 던질 수 있습니다.
+    }
+
+    // cURL 세션 종료
+    curl_close($ch);
+
     }
 }
 ?>
