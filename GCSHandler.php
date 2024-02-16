@@ -49,7 +49,7 @@ class GCSHandler extends GCSConnector {
             $object->update(['metadata' => $metadata]);
 
             // ... (이하 코드는 이전 코드와 동일하게 유지)
-            return ['success' => true];
+            return ['success' => true, 'gcsKey' => $gcsKey];
         } catch (GoogleException $e) {
 
             error_log('Error: ' . $e->getMessage());
