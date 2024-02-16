@@ -370,11 +370,12 @@ $app->post('/gcsupload', function (Request $request, Response $response, array $
 $app->get('/gcsdownload/{gcsKey}', function (Request $request, Response $response, array $args) {
     try {
         $gcsKey = $args['gcsKey'];
-        $bucketName = 'your-bucket-name'; // 실제 버킷 이름으로 변경
+        $bucketName = BUCKET_NAME; // 실제 버킷 이름으로 변경
 
         $gcsHandler = new GCSHandler(_PROJECT_ID_, _KEYFILEPATH_);
 
         // 구글 클라우드 스토리지에서 이미지를 가져오기
+        $objectPath = 'photo_test/' . $gcsKey;
         $imageDataFromGCS = $gcsHandler->getImageData($gcsKey, $bucketName);
 
         if (!$imageDataFromGCS) {
