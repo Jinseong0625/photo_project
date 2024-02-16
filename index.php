@@ -376,7 +376,7 @@ $app->get('/gcsdownload/{gcsKey}', function (Request $request, Response $respons
 
         // 구글 클라우드 스토리지에서 이미지를 가져오기
         $objectPath = 'photo_test/' . $gcsKey;
-        $imageDataFromGCS = $gcsHandler->getImageData($gcsKey, $bucketName);
+        $imageDataFromGCS = $gcsHandler->getImageData($objectPath, $bucketName);
 
         if (!$imageDataFromGCS) {
             // 이미지 정보를 찾을 수 없음
